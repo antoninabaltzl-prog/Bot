@@ -2,6 +2,23 @@
 # -*- coding: utf-8 -*-
 """
 ☠️ 𝑺𝑼𝑵𝑹𝑨𝑲𝑼 — 𝑷𝑹𝑬𝑴𝑰𝑼𝑴 𝑭𝑰𝑳𝑬 𝑹𝑼𝑵𝑵𝑬𝑹 𝑩𝑶𝑻 ☠️
+✅ Upload .py files
+✅ Approval System
+✅ Run/Stop/Logs
+✅ Auto Input Detection
+✅ Admin Panel (Full Control)
+✅ Premium Font (𝐀ɴɪsʜ style)
+✅ Credit System (10 free)
+✅ 1 Credit = 7 Hours Run
+✅ Daily Bonus (+2 credits/24h)
+✅ Refer & Earn (+2 credits/ref)
+✅ Broadcast System
+✅ Add/Remove Admin
+✅ Ban/Unban User
+✅ View All Users
+✅ View All Files
+👑 Owner: @SunrakuV2 | ID: 8641613327
+📢 Channel: @Anishpy | @VOUCH_R
 """
 
 import os
@@ -22,9 +39,10 @@ from telebot.types import (
 )
 
 # ============================================================
-# PREMIUM FONT
+# PREMIUM FONT (𝐀ɴɪsʜ style)
 # ============================================================
 def pf(text):
+    """Convert text to premium font: First letter bold serif, rest small caps"""
     bold_serif = {
         'A': '𝐀', 'B': '𝐁', 'C': '𝐂', 'D': '𝐃', 'E': '𝐄', 'F': '𝐅', 'G': '𝐆',
         'H': '𝐇', 'I': '𝐈', 'J': '𝐉', 'K': '𝐊', 'L': '𝐋', 'M': '𝐌', 'N': '𝐍',
@@ -58,7 +76,7 @@ def pf(text):
     return ' '.join(result)
 
 # ============================================================
-# BUTTON CONSTANTS
+# BUTTON CONSTANTS (Premium Font)
 # ============================================================
 BTN_UPLOAD = pf("📤 Upload File")
 BTN_RUN = pf("▶️ Run File")
@@ -73,6 +91,7 @@ BTN_ADMIN = pf("👑 Admin Panel")
 BTN_CONTACT = pf("📞 Contact")
 BTN_INPUT = pf("💬 Send Input")
 BTN_PIP = pf("📦 Pip Install")
+BTN_DEV = pf("👑 Dev")
 
 # ============================================================
 # CONFIG
@@ -339,7 +358,6 @@ class UserSession:
         self.logs = []
         self.start_time = None
         self.end_time = None
-        self.speed = 0
         self.total_checks = 0
         self.awaiting_input = False
         self.input_prompt = ""
@@ -363,15 +381,6 @@ class UserSession:
             diff = end_time - self.start_time
             return str(diff).split('.')[0]
         return "N/A"
-    
-    def get_speed(self):
-        if self.start_time and self.total_checks > 0:
-            end_time = self.end_time or datetime.now()
-            runtime_seconds = max((end_time - self.start_time).total_seconds(), 1)
-            speed = int((self.total_checks / runtime_seconds) * 60)
-            self.speed = speed
-            return speed
-        return self.speed or 0
 
 # ============================================================
 # INPUT DETECTION
@@ -406,7 +415,7 @@ def ask_user_for_input(session, prompt):
         if logs and logs != "📭 No logs yet.":
             bot.send_message(
                 session.chat_id,
-                f"{pf('📜 Recent Logs:')}\n```\n{logs}\n```",
+                f"{pf('📜 Recent Logs:')}\n<code>{logs}</code>",
                 parse_mode='HTML'
             )
         
@@ -414,7 +423,7 @@ def ask_user_for_input(session, prompt):
             session.chat_id,
             f"{pf('📥 Input Required!')}\n\n"
             f"{pf('Your file needs input:')}\n"
-            f"```\n{prompt}\n```\n\n"
+            f"<code>{prompt}</code>\n\n"
             f"{pf('💬 Reply with the value.')}\n"
             f"{pf('Type /cancel to cancel.')}",
             parse_mode='HTML'
@@ -461,7 +470,7 @@ def process_user_input(message, chat_id):
             if logs and logs != "📭 No logs yet.":
                 bot.send_message(
                     chat_id,
-                    f"{pf('📜 Updated Logs:')}\n```\n{logs}\n```",
+                    f"{pf('📜 Updated Logs:')}\n<code>{logs}</code>",
                     parse_mode='HTML'
                 )
     except Exception as e:
@@ -480,13 +489,14 @@ def main_menu(user_id):
             BTN_UPLOAD, BTN_RUN, BTN_STOP, BTN_LOGS,
             BTN_INPUT, BTN_PIP, BTN_FILES, BTN_CREDITS,
             BTN_BONUS, BTN_REFER, BTN_PROFILE, BTN_ADMIN,
-            BTN_CONTACT
+            BTN_CONTACT, BTN_DEV
         ]
     else:
         buttons = [
             BTN_UPLOAD, BTN_RUN, BTN_STOP, BTN_LOGS,
             BTN_INPUT, BTN_PIP, BTN_FILES, BTN_CREDITS,
-            BTN_BONUS, BTN_REFER, BTN_PROFILE, BTN_CONTACT
+            BTN_BONUS, BTN_REFER, BTN_PROFILE, BTN_CONTACT,
+            BTN_DEV
         ]
     
     for i in range(0, len(buttons), 2):
@@ -512,6 +522,7 @@ def start_cmd(message):
         if user_id not in user_sessions:
             user_sessions[user_id] = UserSession(user_id)
     
+    # Check referral
     if len(message.text.split()) > 1:
         ref_code = message.text.split()[1]
         if ref_code.startswith('SUNRAKU'):
@@ -663,7 +674,7 @@ def reject_file(call):
     bot.send_message(user_id, f"{pf('❌ Your file')} <code>{file_name}</code> {pf('was rejected.')}\n{pf('📞 Contact @SunrakuV2 for details.')}", parse_mode='HTML')
 
 # ============================================================
-# RUN FILE - FIXED
+# RUN FILE
 # ============================================================
 @bot.message_handler(func=lambda m: m.text == BTN_RUN)
 def run_file_cmd(message):
@@ -723,8 +734,6 @@ def run_selected_file(call):
 
 def run_file(message, file_name, free=False):
     user_id = message.chat.id
-    
-    # Check if already running
     with lock:
         if user_id not in user_sessions:
             user_sessions[user_id] = UserSession(user_id)
@@ -739,13 +748,12 @@ def run_file(message, file_name, free=False):
         bot.reply_to(message, f"{pf('❌ File not found:')} <code>{file_name}</code>", parse_mode='HTML')
         return
     
-    # Deduct credit if not free
     if not free:
         new_credits = deduct_credit(user_id)
     else:
         new_credits = get_credits(user_id)
     
-    # Reset session
+    # Reset session logs
     session.logs = []
     session.total_checks = 0
     session.start_time = datetime.now()
@@ -758,7 +766,6 @@ def run_file(message, file_name, free=False):
     msg = bot.reply_to(message, pf("🚀 Starting..."), parse_mode='HTML')
     
     try:
-        # Start process with proper stdin
         session.process = subprocess.Popen(
             [sys.executable, "-u", file_path],
             stdout=subprocess.PIPE,
@@ -774,7 +781,6 @@ def run_file(message, file_name, free=False):
         if not free:
             start_run_session(user_id, file_name)
         
-        # Start log reader thread
         def read_logs():
             stdout = session.process.stdout
             partial_output = ""
@@ -898,11 +904,11 @@ def view_logs_cmd(message):
     
     if len(logs) > 4000:
         chunks = [logs[i:i+4000] for i in range(0, len(logs), 4000)]
-        bot.reply_to(message, f"{pf('📜 Recent Logs (Part 1/{}')}{len(chunks)}{pf(')')}:\n```\n{chunks[0]}\n```", parse_mode='HTML')
+        bot.reply_to(message, f"{pf('📜 Recent Logs (Part 1/{}')}{len(chunks)}{pf(')')}:\n<code>{chunks[0]}</code>", parse_mode='HTML')
         for i, chunk in enumerate(chunks[1:4], 2):
-            bot.send_message(chat_id, f"{pf('📜 Logs (Part {}/{}')}{i}{len(chunks)}{pf(')')}:\n```\n{chunk}\n```", parse_mode='HTML')
+            bot.send_message(chat_id, f"{pf('📜 Logs (Part {}/{}')}{i}{len(chunks)}{pf(')')}:\n<code>{chunk}</code>", parse_mode='HTML')
     else:
-        bot.reply_to(message, f"{pf('📜 Recent Logs:')}\n```\n{logs}\n```", parse_mode='HTML')
+        bot.reply_to(message, f"{pf('📜 Recent Logs:')}\n<code>{logs}</code>", parse_mode='HTML')
 
 # ============================================================
 # SEND INPUT
@@ -959,7 +965,7 @@ def process_manual_input(message, user_id):
             time.sleep(0.3)
             logs = session.get_logs(10)
             if logs and logs != "📭 No logs yet.":
-                bot.send_message(message.chat.id, f"{pf('📜 Updated Logs:')}\n```\n{logs}\n```", parse_mode='HTML')
+                bot.send_message(message.chat.id, f"{pf('📜 Updated Logs:')}\n<code>{logs}</code>", parse_mode='HTML')
     except Exception as e:
         session.awaiting_input = False
         session.add_log(f"❌ Input error: {e}")
@@ -1010,7 +1016,7 @@ def process_pip_install(message):
         else:
             error = result.stderr or result.stdout
             bot.edit_message_text(
-                f"{pf('❌ Failed to install')} <code>{package}</code>:\n```\n{error[:300]}\n```",
+                f"{pf('❌ Failed to install')} <code>{package}</code>:\n<code>{error[:300]}</code>",
                 message.chat.id,
                 msg.message_id,
                 parse_mode='HTML'
@@ -1190,6 +1196,24 @@ def contact_cmd(message):
     bot.reply_to(
         message,
         f"{pf('📞 Contact & Support')}\n◈◆◈◆◈◆◈◆◈◆◈◆◈◆◈\n{pf('Click below to connect:')}",
+        reply_markup=markup,
+        parse_mode='HTML'
+    )
+
+# ============================================================
+# DEV
+# ============================================================
+@bot.message_handler(func=lambda m: m.text == BTN_DEV)
+def dev_cmd(message):
+    markup = InlineKeyboardMarkup()
+    markup.add(
+        InlineKeyboardButton(pf("👑 @SunrakuV2"), url="https://t.me/SunrakuV2"),
+        InlineKeyboardButton(pf("📢 @Anishpy"), url="https://t.me/Anishpy"),
+        InlineKeyboardButton(pf("📢 @VOUCH_R"), url="https://t.me/VOUCH_R")
+    )
+    bot.reply_to(
+        message,
+        f"{pf('👑 Developer & Channels')}\n◈◆◈◆◈◆◈◆◈◆◈◆◈◆◈\n{pf('Click below to connect:')}",
         reply_markup=markup,
         parse_mode='HTML'
     )
@@ -1480,13 +1504,14 @@ print("""
 ╔═══════════════════════════════════════════════════════════════╗
 ║   ☠️ 𝑺𝑼𝑵𝑹𝑨𝑲𝑼 — 𝑷𝑹𝑬𝑴𝑰𝑼𝑴 𝑭𝑰𝑳𝑬 𝑹𝑼𝑵𝑵𝑬𝑹 𝑩𝑶𝑻              ║
 ║   ✦ Upload .py files                                        ║
-║   ✦ Auto input detection                                    ║
-║   ✦ View Logs                                               ║
+║   ✦ Approval System                                         ║
+║   ✦ Run/Stop/Logs                                           ║
+║   ✦ Auto Input Detection                                    ║
 ║   ✦ Credit System (10 free)                                 ║
 ║   ✦ 1 Credit = 7 Hours Run                                  ║
 ║   ✦ Daily Bonus (+2 credits/24h)                            ║
 ║   ✦ Refer & Earn (+2 credits/ref)                           ║
-║   ✦ Admin Panel                                             ║
+║   ✦ Admin Panel (Full Control)                              ║
 ║   ✦ Premium Font (𝐀ɴɪsʜ style)                              ║
 ║   ♛ @SunrakuV2 | ID: 8641613327                            ║
 ║   ✦ @Anishpy | @VOUCH_R                                    ║
