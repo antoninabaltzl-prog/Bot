@@ -1,0 +1,9 @@
+{
+  "build": {
+    "builder": "NIXPACKS"
+  },
+  "deploy": {
+    "startCommand": "python 'MONI ON TOOL.py'",
+    "restartPolicy": "on-failure"
+  }
+}
