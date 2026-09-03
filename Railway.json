@@ -3,7 +3,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "python 'MONI ON TOOL.py'",
+    "startCommand": "python 'main.py'",
     "restartPolicy": "on-failure"
   }
 }
