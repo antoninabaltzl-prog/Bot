@@ -341,6 +341,8 @@ class UserSession:
         self.logs = []
         self.start_time = None
         self.end_time = None
+        self.exit_code = None
+        self.last_run_error = ""
         self.speed = 0
         self.total_checks = 0
         self.installed_packages = []
@@ -1031,8 +1033,10 @@ def run_file(message):
         bot.reply_to(message, "⚠️ <b>File is already running!</b>\nClick <b>STOP FILE</b> first.", parse_mode='HTML')
         return
     
-    # file_path is absolute, so it remains valid even when cwd is UPLOAD_DIR.
-    file_path = session.file_path
+    # Normalize once more in case this session was created before the
+    # absolute-path fix was deployed.
+    file_path = os.path.abspath(session.file_path) if session.file_path else None
+    session.file_path = file_path
     
     if not file_path or not os.path.exists(file_path):
         session.add_log("❌ No file found! Upload a .py file.")
@@ -1057,6 +1061,8 @@ def run_file(message):
         session.total_checks = 0
         session.start_time = datetime.now()
         session.end_time = None
+        session.exit_code = None
+        session.last_run_error = ""
         
         # Use the absolute script path. cwd remains UPLOAD_DIR so relative
         # files created/read by the uploaded script stay in its file area.
@@ -1067,17 +1073,22 @@ def run_file(message):
             stdin=subprocess.PIPE,
             text=True,
             bufsize=1,
-            cwd=UPLOAD_DIR
+            cwd=UPLOAD_DIR,
+            env={**os.environ, "PYTHONUNBUFFERED": "1"}
         )
         session.is_running = True
         session.speed = 0
         session.add_log(f"▶️ File started: {file_name}")
+        session.add_log(f"📂 Running from: {UPLOAD_DIR}")
         
         # Start 7-hour session
         start_run_session(chat_id, file_name)
         
         def read_logs():
-            stdout = session.process.stdout
+            # Keep a local reference. session.process can change after a
+            # stop/restart; the reader must never monitor a different run.
+            process = session.process
+            stdout = process.stdout
             partial_output = ""
             prompt_sent = False
             
@@ -1104,15 +1115,16 @@ def run_file(message):
                         if (
                             prompt
                             and not prompt_sent
-                            and session.process.poll() is None
+                            and process.poll() is None
                             and looks_like_input_prompt(prompt)
                         ):
                             ask_user_for_process_input(session, prompt)
                             partial_output = ""
                             prompt_sent = True
-                    if session.process.poll() is not None:
+                    if process.poll() is not None:
                         break
                 except Exception as e:
+                    session.last_run_error = str(e)
                     session.add_log(f"⚠️ Log reader error: {e}")
                     break
             
@@ -1120,7 +1132,22 @@ def run_file(message):
             if remaining and not session.awaiting_input:
                 session.add_log(remaining)
             
-            return_code = session.process.poll()
+            # Wait for the real child exit instead of declaring it stopped
+            # while it is still shutting down.
+            return_code = process.poll()
+            if return_code is None:
+                try:
+                    return_code = process.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    session.add_log(
+                        "⚠️ Output reader ended, but the file is still running."
+                    )
+                    return
+
+            if session.process is not process:
+                return
+
+            session.exit_code = return_code
             session.awaiting_input = False
             session.input_prompt = ""
             session.is_running = False
@@ -1241,6 +1268,7 @@ def show_live_status(message):
         session = user_sessions[chat_id]
     
     if session.process and session.process.poll() is not None and session.is_running:
+        session.exit_code = session.process.poll()
         session.is_running = False
         session.end_time = session.end_time or datetime.now()
     
@@ -1251,6 +1279,7 @@ def show_live_status(message):
     runtime = session.get_runtime()
     speed = session.get_speed()
     input_state = "⏳ Waiting" if session.awaiting_input else "No"
+    exit_text = str(session.exit_code) if session.exit_code is not None else "N/A"
     
     status_msg = f"""
 📊 <b>LIVE STATUS</b>
@@ -1262,6 +1291,7 @@ def show_live_status(message):
 📊 <b>Checks:</b> <code>{session.total_checks}</code>
 ⚡ <b>Speed:</b> <code>{speed}</code> checks/min
 💬 <b>Input:</b> <code>{input_state}</code>
+↩️ <b>Exit code:</b> <code>{exit_text}</code>
 📜 <b>Logs:</b> <code>{len(session.logs)}</code> lines
 ━━━━━━━━━━━━━━━━━━━━━
 👑 @SunrakuV2 | 📢 @Anishpy | @VOUCH_R
