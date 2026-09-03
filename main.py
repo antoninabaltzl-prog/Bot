@@ -2,6 +2,22 @@
 # -*- coding: utf-8 -*-
 """
 ☠️ 𝑺𝑼𝑵𝑹𝑨𝑲𝑼 — 𝑼𝑳𝑻𝑰𝑴𝑨𝑻𝑬 𝑭𝑰𝑳𝑬 𝑹𝑼𝑵𝑵𝑬𝑹 𝑩𝑶𝑻 ☠️
+✅ Upload .py files
+✅ Auto input detection
+✅ Send Input (Manual)
+✅ Pip Install
+✅ View Logs
+✅ Credit System (10 free)
+✅ 1 Credit = 7 Hours Run
+✅ Daily Bonus (2 credits/24h)
+✅ Refer & Earn (+2 credits per referral)
+✅ Admin Panel
+✅ Add Admin System
+✅ Broadcast System
+✅ Ban/Unban System
+✅ Mixed Serif Font (𝐀ɴɪsʜ style)
+👑 Owner: @SunrakuV2
+📢 Channel: @Anishpy | @VOUCH_R
 """
 
 import os
@@ -22,9 +38,8 @@ from telebot.types import (
 )
 
 # ============================================================
-# FIXED: Pre-computed button texts
+# BUTTON CONSTANTS
 # ============================================================
-# Define button texts as constants (NO function calls in handler)
 BTN_UPLOAD = "📤 Upload File"
 BTN_RUN = "▶️ Run File"
 BTN_STOP = "⏹ Stop File"
@@ -36,9 +51,11 @@ BTN_REFER = "🤝 Refer & Earn"
 BTN_PROFILE = "👤 Profile"
 BTN_ADMIN = "👑 Admin Panel"
 BTN_CONTACT = "📞 Contact"
+BTN_INPUT = "💬 Send Input"
+BTN_PIP = "📦 Pip Install"
 
 # ============================================================
-# MIXED SERIF FONT CONVERTER (ONLY FOR DISPLAY)
+# MIXED SERIF FONT CONVERTER
 # ============================================================
 def mixed_serif(text):
     bold_serif = {
@@ -156,6 +173,14 @@ def get_credits(user_id):
     conn.close()
     return row[0] if row else 10
 
+def set_credits(user_id, amount):
+    conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
+    c = conn.cursor()
+    c.execute('INSERT OR IGNORE INTO users (user_id, credits) VALUES (?, 10)', (user_id,))
+    c.execute('UPDATE users SET credits = ? WHERE user_id = ?', (amount, user_id))
+    conn.commit()
+    conn.close()
+
 def add_credits(user_id, amount):
     conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
     c = conn.cursor()
@@ -234,7 +259,7 @@ def claim_daily_bonus(user_id):
     return True, new_credits
 
 # ============================================================
-# REFERRAL
+# REFERRAL SYSTEM
 # ============================================================
 def get_referral_code(user_id):
     conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
@@ -256,6 +281,14 @@ def get_referral_count(user_id):
     conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
     c = conn.cursor()
     c.execute('SELECT COUNT(*) FROM referrals WHERE referrer_id = ? AND credited = 1', (user_id,))
+    count = c.fetchone()[0]
+    conn.close()
+    return count
+
+def get_pending_referrals(user_id):
+    conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
+    c = conn.cursor()
+    c.execute('SELECT COUNT(*) FROM referrals WHERE referrer_id = ? AND credited = 0', (user_id,))
     count = c.fetchone()[0]
     conn.close()
     return count
@@ -296,7 +329,7 @@ def get_all_users():
     return users
 
 # ============================================================
-# RUN SESSION (7 HOURS)
+# 7-HOUR RUN SESSION
 # ============================================================
 def start_run_session(user_id, file_name):
     conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
@@ -343,26 +376,37 @@ class UserSession:
     def add_log(self, msg):
         timestamp = datetime.now().strftime("%H:%M:%S")
         self.logs.append(f"[{timestamp}] {msg}")
-        if len(self.logs) > 200:
+        if len(self.logs) > 500:
             self.logs.pop(0)
             
-    def get_logs(self, lines=20):
+    def get_logs(self, lines=30):
         return "\n".join(self.logs[-lines:]) if self.logs else "📭 No logs yet."
 
 # ============================================================
 # LOADING ANIMATION
 # ============================================================
-LOADING_FRAMES = [
-    "🔄 Loading ■□□□□□□□□□ 0%",
-    "🔄 Loading ■■□□□□□□□□ 20%",
-    "🔄 Loading ■■■□□□□□□□ 40%",
-    "🔄 Loading ■■■■□□□□□□ 50%",
-    "🔄 Loading ■■■■■□□□□□ 60%",
-    "🔄 Loading ■■■■■■□□□□ 70%",
-    "🔄 Loading ■■■■■■■□□□ 80%",
-    "🔄 Loading ■■■■■■■■□□ 90%",
-    "✅ Done! ■■■■■■■■■■ 100%"
-]
+def send_loading(message, frames=None, delay=0.2):
+    if frames is None:
+        frames = [
+            "🔄 Loading ■□□□□□□□□□ 0%",
+            "🔄 Loading ■■□□□□□□□□ 20%",
+            "🔄 Loading ■■■□□□□□□□ 40%",
+            "🔄 Loading ■■■■□□□□□□ 50%",
+            "🔄 Loading ■■■■■□□□□□ 60%",
+            "🔄 Loading ■■■■■■□□□□ 70%",
+            "🔄 Loading ■■■■■■■□□□ 80%",
+            "🔄 Loading ■■■■■■■■□□ 90%",
+            "✅ Done! ■■■■■■■■■■ 100%"
+        ]
+    
+    msg = bot.reply_to(message, frames[0])
+    for frame in frames[1:]:
+        time.sleep(delay)
+        try:
+            bot.edit_message_text(frame, message.chat.id, msg.message_id)
+        except:
+            pass
+    return msg
 
 START_FRAMES = [
     "🚀 Starting ■□□□□□□□□□ 0%",
@@ -375,16 +419,6 @@ START_FRAMES = [
     "🚀 Starting ■■■■■■■■□□ 90%",
     "✅ Ready! ■■■■■■■■■■ 100%"
 ]
-
-def send_loading_animation(message, frames=LOADING_FRAMES, delay=0.3):
-    msg = bot.reply_to(message, frames[0])
-    for frame in frames[1:]:
-        time.sleep(delay)
-        try:
-            bot.edit_message_text(frame, message.chat.id, msg.message_id)
-        except:
-            pass
-    return msg
 
 # ============================================================
 # INPUT DETECTION
@@ -460,7 +494,7 @@ def process_input(message, chat_id):
         bot.reply_to(message, f"❌ Error: {e}")
 
 # ============================================================
-# MAIN MENU - FIXED: Use plain text buttons
+# MAIN MENU
 # ============================================================
 def main_menu(user_id):
     markup = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
@@ -468,17 +502,17 @@ def main_menu(user_id):
     if is_admin(user_id):
         buttons = [
             BTN_UPLOAD, BTN_RUN, BTN_STOP, BTN_LOGS,
-            BTN_FILES, BTN_CREDITS, BTN_BONUS, BTN_REFER,
-            BTN_PROFILE, BTN_ADMIN, BTN_CONTACT
+            BTN_INPUT, BTN_PIP, BTN_FILES, BTN_CREDITS,
+            BTN_BONUS, BTN_REFER, BTN_PROFILE, BTN_ADMIN,
+            BTN_CONTACT
         ]
     else:
         buttons = [
             BTN_UPLOAD, BTN_RUN, BTN_STOP, BTN_LOGS,
-            BTN_FILES, BTN_CREDITS, BTN_BONUS, BTN_REFER,
-            BTN_PROFILE, BTN_CONTACT
+            BTN_INPUT, BTN_PIP, BTN_FILES, BTN_CREDITS,
+            BTN_BONUS, BTN_REFER, BTN_PROFILE, BTN_CONTACT
         ]
     
-    # Add buttons in rows of 2
     for i in range(0, len(buttons), 2):
         row = buttons[i:i+2]
         markup.add(*[KeyboardButton(btn) for btn in row])
@@ -546,7 +580,7 @@ def start_cmd(message):
     bot.edit_message_text(welcome, message.chat.id, msg.message_id, parse_mode='HTML', reply_markup=main_menu(user_id))
 
 # ============================================================
-# FIXED: BUTTON HANDLERS - Match exact text
+# UPLOAD FILE
 # ============================================================
 @bot.message_handler(func=lambda m: m.text == BTN_UPLOAD)
 def upload_file_cmd(message):
@@ -554,17 +588,138 @@ def upload_file_cmd(message):
     if is_banned(user_id):
         bot.reply_to(message, "🚫 You are banned!", parse_mode='HTML')
         return
-    msg = send_loading_animation(message, LOADING_FRAMES[:5], 0.2)
+    msg = send_loading(message, delay=0.15)
     bot.edit_message_text("📤 Send your .py file", message.chat.id, msg.message_id, parse_mode='HTML')
     bot.register_next_step_handler(message, handle_upload)
 
+@bot.message_handler(content_types=['document'])
+def handle_upload(message):
+    user_id = message.chat.id
+    if is_banned(user_id):
+        bot.reply_to(message, "🚫 You are banned!", parse_mode='HTML')
+        return
+    msg = bot.reply_to(message, "⏳ Processing...", parse_mode='HTML')
+    if not message.document or not message.document.file_name.endswith('.py'):
+        bot.edit_message_text("❌ Only .py files allowed!", message.chat.id, msg.message_id, parse_mode='HTML')
+        return
+    if message.document.file_size > 5 * 1024 * 1024:
+        bot.edit_message_text("❌ Max 5MB!", message.chat.id, msg.message_id, parse_mode='HTML')
+        return
+    conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
+    c = conn.cursor()
+    c.execute('SELECT file_name FROM user_files WHERE user_id = ? AND file_name = ?', (user_id, message.document.file_name))
+    if c.fetchone():
+        conn.close()
+        bot.edit_message_text(f"⚠️ {message.document.file_name} already exists!", message.chat.id, msg.message_id, parse_mode='HTML')
+        return
+    conn.close()
+    
+    # Loading animation
+    frames = [
+        "📤 Uploading ■□□□□□□□□□ 0%",
+        "📤 Uploading ■■□□□□□□□□ 20%",
+        "📤 Uploading ■■■□□□□□□□ 40%",
+        "📤 Uploading ■■■■□□□□□□ 50%",
+        "📤 Uploading ■■■■■□□□□□ 60%",
+        "📤 Uploading ■■■■■■□□□□ 70%",
+        "📤 Uploading ■■■■■■■□□□ 80%",
+        "📤 Uploading ■■■■■■■■□□ 90%",
+        "✅ Uploaded! ■■■■■■■■■■ 100%"
+    ]
+    for frame in frames:
+        time.sleep(0.15)
+        try:
+            bot.edit_message_text(frame, message.chat.id, msg.message_id)
+        except:
+            pass
+    
+    try:
+        file_info = bot.get_file(message.document.file_id)
+        downloaded = bot.download_file(file_info.file_path)
+        file_path = os.path.join(UPLOAD_DIR, f"{user_id}_{message.document.file_name}")
+        with open(file_path, 'wb') as f:
+            f.write(downloaded)
+        conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
+        c = conn.cursor()
+        c.execute('INSERT INTO user_files (user_id, file_name, file_type, approved, uploaded_at) VALUES (?, ?, ?, ?, ?)',
+                  (user_id, message.document.file_name, 'py', 0, datetime.now().isoformat()))
+        conn.commit()
+        conn.close()
+        approve_markup = InlineKeyboardMarkup(row_width=2)
+        approve_markup.add(
+            InlineKeyboardButton("✅ Approve", callback_data=f"approve_{user_id}_{message.document.file_name}"),
+            InlineKeyboardButton("❌ Reject", callback_data=f"reject_{user_id}_{message.document.file_name}")
+        )
+        for admin_id in admin_ids:
+            try:
+                bot.send_message(
+                    admin_id,
+                    f"📩 New File Upload\n👤 User: <code>{user_id}</code>\n📁 File: <code>{message.document.file_name}</code>\n💰 Credits: {get_credits(user_id)}",
+                    reply_markup=approve_markup,
+                    parse_mode='HTML'
+                )
+            except:
+                pass
+        bot.edit_message_text(
+            f"✅ Uploaded: <code>{message.document.file_name}</code>\n⏳ Waiting for admin approval...",
+            message.chat.id,
+            msg.message_id,
+            parse_mode='HTML'
+        )
+    except Exception as e:
+        bot.edit_message_text(f"❌ Error: {e}", message.chat.id, msg.message_id, parse_mode='HTML')
+
+# ============================================================
+# APPROVE/REJECT CALLBACKS
+# ============================================================
+@bot.callback_query_handler(func=lambda c: c.data.startswith('approve_'))
+def approve_file(call):
+    if not is_admin(call.from_user.id):
+        bot.answer_callback_query(call.id, "⚠️ Admin only!", show_alert=True)
+        return
+    parts = call.data.split('_')
+    user_id = int(parts[1])
+    file_name = '_'.join(parts[2:])
+    conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
+    c = conn.cursor()
+    c.execute('UPDATE user_files SET approved = 1 WHERE user_id = ? AND file_name = ?', (user_id, file_name))
+    conn.commit()
+    conn.close()
+    bot.answer_callback_query(call.id, "✅ Approved!")
+    bot.edit_message_text(f"✅ Approved: <code>{file_name}</code>", call.message.chat.id, call.message.message_id, parse_mode='HTML')
+    bot.send_message(user_id, f"✅ Your file <code>{file_name}</code> has been approved!\n▶️ Use Run File button to start.", parse_mode='HTML')
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith('reject_'))
+def reject_file(call):
+    if not is_admin(call.from_user.id):
+        bot.answer_callback_query(call.id, "⚠️ Admin only!", show_alert=True)
+        return
+    parts = call.data.split('_')
+    user_id = int(parts[1])
+    file_name = '_'.join(parts[2:])
+    conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
+    c = conn.cursor()
+    c.execute('DELETE FROM user_files WHERE user_id = ? AND file_name = ?', (user_id, file_name))
+    conn.commit()
+    conn.close()
+    file_path = os.path.join(UPLOAD_DIR, f"{user_id}_{file_name}")
+    if os.path.exists(file_path):
+        os.remove(file_path)
+    bot.answer_callback_query(call.id, "❌ Rejected!")
+    bot.edit_message_text(f"❌ Rejected: <code>{file_name}</code>", call.message.chat.id, call.message.message_id, parse_mode='HTML')
+    bot.send_message(user_id, f"❌ Your file <code>{file_name}</code> was rejected.\n📞 Contact @SunrakuV2 for details.", parse_mode='HTML')
+
+# ============================================================
+# RUN FILE
+# ============================================================
 @bot.message_handler(func=lambda m: m.text == BTN_RUN)
 def run_file_cmd(message):
     user_id = message.chat.id
     if is_banned(user_id):
         bot.reply_to(message, "🚫 You are banned!", parse_mode='HTML')
         return
-    msg = send_loading_animation(message, LOADING_FRAMES[:4], 0.2)
+    
+    msg = send_loading(message, delay=0.15)
     
     conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
     c = conn.cursor()
@@ -595,241 +750,26 @@ def run_file_cmd(message):
         markup.add(InlineKeyboardButton(f"▶️ {file_name[0]}", callback_data=f"run_{user_id}_{file_name[0]}"))
     bot.edit_message_text("📂 Select file to run:", message.chat.id, msg.message_id, reply_markup=markup, parse_mode='HTML')
 
-@bot.message_handler(func=lambda m: m.text == BTN_STOP)
-def stop_file_cmd(message):
-    user_id = message.chat.id
-    msg = send_loading_animation(message, LOADING_FRAMES[:4], 0.2)
-    with lock:
-        if user_id not in user_sessions:
-            bot.edit_message_text("❌ No session!", message.chat.id, msg.message_id, parse_mode='HTML')
-            return
-        session = user_sessions[user_id]
-    if not session.is_running:
-        bot.edit_message_text("⚠️ No file running!", message.chat.id, msg.message_id, parse_mode='HTML')
-        return
-    for frame in LOADING_FRAMES[4:7]:
-        time.sleep(0.15)
-        try:
-            bot.edit_message_text(f"⏹ {frame}", message.chat.id, msg.message_id)
-        except:
-            pass
-    try:
-        session.is_running = False
-        session.process.terminate()
-        time.sleep(1)
-        if session.process.poll() is None:
-            session.process.kill()
-        session.add_log("⏹ Stopped by user")
-        if session.current_file:
-            end_run_session(user_id, session.current_file)
-        time.sleep(0.3)
-        bot.edit_message_text("⏹ File stopped!", message.chat.id, msg.message_id, parse_mode='HTML')
-    except Exception as e:
-        bot.edit_message_text(f"❌ Error: {e}", message.chat.id, msg.message_id, parse_mode='HTML')
-
-@bot.message_handler(func=lambda m: m.text == BTN_LOGS)
-def view_logs_cmd(message):
-    user_id = message.chat.id
-    msg = send_loading_animation(message, LOADING_FRAMES[:4], 0.2)
-    with lock:
-        if user_id not in user_sessions:
-            bot.edit_message_text("❌ No session!", message.chat.id, msg.message_id, parse_mode='HTML')
-            return
-        session = user_sessions[user_id]
-    logs = session.get_logs(25)
-    if not logs or logs == "📭 No logs yet.":
-        bot.edit_message_text("📭 No logs yet.\n▶️ Run a file first.", message.chat.id, msg.message_id, parse_mode='HTML')
-        return
-    time.sleep(0.3)
-    if len(logs) > 4000:
-        chunks = [logs[i:i+4000] for i in range(0, len(logs), 4000)]
-        bot.edit_message_text(f"📜 Logs (Part 1/{len(chunks)})\n```\n{chunks[0]}\n```", message.chat.id, msg.message_id, parse_mode='HTML')
-        for i, chunk in enumerate(chunks[1:3], 2):
-            bot.send_message(message.chat.id, f"📜 Logs (Part {i}/{len(chunks)})\n```\n{chunk}\n```", parse_mode='HTML')
-    else:
-        bot.edit_message_text(f"📜 Recent Logs:\n```\n{logs}\n```", message.chat.id, msg.message_id, parse_mode='HTML')
-
-@bot.message_handler(func=lambda m: m.text == BTN_FILES)
-def my_files_cmd(message):
-    user_id = message.chat.id
-    if is_banned(user_id):
-        bot.reply_to(message, "🚫 You are banned!", parse_mode='HTML')
-        return
-    msg = send_loading_animation(message, LOADING_FRAMES[:4], 0.2)
-    conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
-    c = conn.cursor()
-    c.execute('SELECT file_name, approved FROM user_files WHERE user_id = ?', (user_id,))
-    files = c.fetchall()
-    conn.close()
-    if not files:
-        bot.edit_message_text("📭 No files uploaded.\n\nUse Upload File button.", message.chat.id, msg.message_id, parse_mode='HTML')
-        return
-    text = "📂 Your Files:\n━━━━━━━━━━━━━━━━━━━━━\n"
-    for file_name, approved in files:
-        status = "✅ Approved" if approved else "⏳ Pending"
-        text += f"📄 {file_name} — {status}\n"
-    time.sleep(0.3)
-    bot.edit_message_text(text, message.chat.id, msg.message_id, parse_mode='HTML')
-
-@bot.message_handler(func=lambda m: m.text == BTN_CREDITS)
-def credits_cmd(message):
-    user_id = message.chat.id
-    msg = send_loading_animation(message, LOADING_FRAMES[:4], 0.2)
-    credits = get_credits(user_id)
-    text = f"""
-💰 Your Credits
-━━━━━━━━━━━━━━━━━━━━━
-👤 User: {message.from_user.first_name}
-💳 Credits: {credits}
-📌 How to get more:
-• 🎁 Daily Bonus: 2 credits/24h
-• 🤝 Refer & Earn: +2 credits/referral
-• 👑 Contact admin for extra credits
-━━━━━━━━━━━━━━━━━━━━━
-"""
-    time.sleep(0.3)
-    bot.edit_message_text(text, message.chat.id, msg.message_id, parse_mode='HTML')
-
-@bot.message_handler(func=lambda m: m.text == BTN_BONUS)
-def daily_bonus_cmd(message):
-    user_id = message.chat.id
-    if is_banned(user_id):
-        bot.reply_to(message, "🚫 You are banned!", parse_mode='HTML')
-        return
-    msg = send_loading_animation(message, LOADING_FRAMES[:4], 0.2)
-    if can_claim_daily_bonus(user_id):
-        claimed, new_credits = claim_daily_bonus(user_id)
-        if claimed:
-            bot.edit_message_text(
-                f"🎁 Daily Bonus Claimed!\n✅ +2 credits added!\n💰 Total credits: {new_credits}\n⏳ Next bonus: 24 hours",
-                message.chat.id,
-                msg.message_id,
-                parse_mode='HTML'
-            )
-        else:
-            bot.edit_message_text("❌ Failed to claim bonus.", message.chat.id, msg.message_id, parse_mode='HTML')
-    else:
-        bot.edit_message_text("⏳ Daily Bonus already claimed!\n🕐 Next claim in: 24 hours", message.chat.id, msg.message_id, parse_mode='HTML')
-
-@bot.message_handler(func=lambda m: m.text == BTN_REFER)
-def refer_cmd(message):
-    user_id = message.chat.id
-    if is_banned(user_id):
-        bot.reply_to(message, "🚫 You are banned!", parse_mode='HTML')
-        return
-    msg = send_loading_animation(message, LOADING_FRAMES[:4], 0.2)
-    ref_code = get_referral_code(user_id)
-    bot_username = bot.get_me().username
-    ref_link = f"https://t.me/{bot_username}?start={ref_code}"
-    referral_count = get_referral_count(user_id)
-    text = f"""
-🤝 Refer & Earn Credits!
-━━━━━━━━━━━━━━━━━━━━━
-📊 Your Referrals: {referral_count}
-💰 Per Referral: +2 credits
-━━━━━━━━━━━━━━━━━━━━━
-🔗 Your Referral Link:
-<code>{ref_link}</code>
-━━━━━━━━━━━━━━━━━━━━━
-📌 How it works:
-1️⃣ Share your link with friends
-2️⃣ They join using your link
-3️⃣ You get +2 credits instantly!
-━━━━━━━━━━━━━━━━━━━━━
-👑 @SunrakuV2 | 📢 @Anishpy
-"""
-    markup = InlineKeyboardMarkup()
-    markup.add(InlineKeyboardButton("📋 Copy Link", callback_data=f"copy_{user_id}"))
-    time.sleep(0.3)
-    bot.edit_message_text(text, message.chat.id, msg.message_id, reply_markup=markup, parse_mode='HTML')
-
-@bot.callback_query_handler(func=lambda c: c.data.startswith('copy_'))
-def copy_link(call):
-    user_id = int(call.data.split('_')[1])
+@bot.callback_query_handler(func=lambda c: c.data.startswith('run_'))
+def run_selected_file(call):
+    parts = call.data.split('_')
+    user_id = int(parts[1])
+    file_name = '_'.join(parts[2:])
     if call.from_user.id != user_id:
-        bot.answer_callback_query(call.id, "⚠️ Not your link!", show_alert=True)
+        bot.answer_callback_query(call.id, "⚠️ Not your file!", show_alert=True)
         return
-    ref_code = get_referral_code(user_id)
-    bot_username = bot.get_me().username
-    ref_link = f"https://t.me/{bot_username}?start={ref_code}"
-    bot.answer_callback_query(call.id, "📋 Link copied!", show_alert=True)
-    bot.send_message(call.message.chat.id, f"🔗 Your Referral Link:\n<code>{ref_link}</code>", parse_mode='HTML')
-
-@bot.message_handler(func=lambda m: m.text == BTN_PROFILE)
-def profile_cmd(message):
-    user_id = message.chat.id
-    if is_banned(user_id):
-        bot.reply_to(message, "🚫 You are banned!", parse_mode='HTML')
+    bot.answer_callback_query(call.id)
+    if can_run_free(user_id, file_name):
+        bot.send_message(call.message.chat.id, f"🔄 Free run!\n<code>{file_name}</code>\n⏳ 7-hour session active", parse_mode='HTML')
+        run_file(call.message, file_name, free=True)
         return
-    msg = send_loading_animation(message, LOADING_FRAMES[:4], 0.2)
     credits = get_credits(user_id)
-    referral_count = get_referral_count(user_id)
-    conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
-    c = conn.cursor()
-    c.execute('SELECT COUNT(*) FROM user_files WHERE user_id = ?', (user_id,))
-    total_files = c.fetchone()[0]
-    c.execute('SELECT COUNT(*) FROM user_files WHERE user_id = ? AND approved = 1', (user_id,))
-    approved_files = c.fetchone()[0]
-    conn.close()
-    admin_status = "👑 Admin" if is_admin(user_id) else "👤 User"
-    text = f"""
-👤 Your Profile
-━━━━━━━━━━━━━━━━━━━━━
-🆔 ID: <code>{user_id}</code>
-🎫 Role: {admin_status}
-💰 Credits: {credits}
-📁 Files: {total_files} (✅ {approved_files} approved)
-🤝 Referrals: {referral_count}
-━━━━━━━━━━━━━━━━━━━━━
-"""
-    time.sleep(0.3)
-    bot.edit_message_text(text, message.chat.id, msg.message_id, parse_mode='HTML')
-
-@bot.message_handler(func=lambda m: m.text == BTN_ADMIN)
-def admin_panel_cmd(message):
-    user_id = message.chat.id
-    if not is_admin(user_id):
-        bot.reply_to(message, "⚠️ Admin only!", parse_mode='HTML')
+    if credits <= 0:
+        bot.send_message(call.message.chat.id, "❌ Insufficient credits!\n💰 Use Daily Bonus or Refer & Earn", parse_mode='HTML')
         return
-    markup = InlineKeyboardMarkup(row_width=2)
-    markup.add(
-        InlineKeyboardButton("💰 Add Credits", callback_data="admin_add_credits"),
-        InlineKeyboardButton("👑 Add Admin", callback_data="admin_add_admin")
-    )
-    markup.add(
-        InlineKeyboardButton("📢 Broadcast", callback_data="admin_broadcast"),
-        InlineKeyboardButton("📊 Stats", callback_data="admin_stats")
-    )
-    markup.add(
-        InlineKeyboardButton("🚫 Ban User", callback_data="admin_ban"),
-        InlineKeyboardButton("✅ Unban User", callback_data="admin_unban")
-    )
-    markup.add(
-        InlineKeyboardButton("📋 Banned List", callback_data="admin_banned_list")
-    )
-    bot.reply_to(message, "👑 Admin Panel", reply_markup=markup, parse_mode='HTML')
+    bot.send_message(call.message.chat.id, f"🚀 Starting: <code>{file_name}</code> (1 credit)", parse_mode='HTML')
+    run_file(call.message, file_name, free=False)
 
-@bot.message_handler(func=lambda m: m.text == BTN_CONTACT)
-def contact_cmd(message):
-    msg = send_loading_animation(message, LOADING_FRAMES[:3], 0.2)
-    markup = InlineKeyboardMarkup()
-    markup.add(
-        InlineKeyboardButton("👑 @SunrakuV2", url="https://t.me/SunrakuV2"),
-        InlineKeyboardButton("📢 @Anishpy", url="https://t.me/Anishpy"),
-        InlineKeyboardButton("📢 @VOUCH_R", url="https://t.me/VOUCH_R")
-    )
-    time.sleep(0.3)
-    bot.edit_message_text(
-        "📞 Contact & Support\n━━━━━━━━━━━━━━━━━━━━━\nClick below to connect:",
-        message.chat.id,
-        msg.message_id,
-        reply_markup=markup,
-        parse_mode='HTML'
-    )
-
-# ============================================================
-# RUN FILE FUNCTION
-# ============================================================
 def run_file(message, file_name, free=False):
     user_id = message.chat.id
     with lock:
@@ -847,13 +787,27 @@ def run_file(message, file_name, free=False):
         new_credits = deduct_credit(user_id)
     else:
         new_credits = get_credits(user_id)
-    msg = bot.reply_to(message, f"🚀 Starting: {ms(file_name)}", parse_mode='HTML')
-    for frame in LOADING_FRAMES[:7]:
+    
+    # Run animation
+    frames = [
+        "🚀 Starting ■□□□□□□□□□ 0%",
+        "🚀 Starting ■■□□□□□□□□ 20%",
+        "🚀 Starting ■■■□□□□□□□ 40%",
+        "🚀 Starting ■■■■□□□□□□ 50%",
+        "🚀 Starting ■■■■■□□□□□ 60%",
+        "🚀 Starting ■■■■■■□□□□ 70%",
+        "🚀 Starting ■■■■■■■□□□ 80%",
+        "🚀 Starting ■■■■■■■■□□ 90%",
+        "✅ Running! ■■■■■■■■■■ 100%"
+    ]
+    msg = bot.reply_to(message, frames[0])
+    for frame in frames[1:]:
         time.sleep(0.15)
         try:
-            bot.edit_message_text(f"🚀 {frame}", message.chat.id, msg.message_id)
+            bot.edit_message_text(frame, message.chat.id, msg.message_id)
         except:
             pass
+    
     try:
         session.process = subprocess.Popen(
             [sys.executable, "-u", file_path],
@@ -872,6 +826,7 @@ def run_file(message, file_name, free=False):
         session.add_log(f"✅ Started: {file_name}")
         if not free:
             start_run_session(user_id, file_name)
+        
         def read_logs():
             stdout = session.process.stdout
             partial = ""
@@ -915,6 +870,7 @@ def run_file(message, file_name, free=False):
             else:
                 session.add_log(f"⚠️ Exited with code {session.process.poll()}")
             end_run_session(user_id, file_name)
+        
         threading.Thread(target=read_logs, daemon=True).start()
         time.sleep(0.3)
         bot.edit_message_text(
@@ -929,111 +885,385 @@ def run_file(message, file_name, free=False):
         bot.edit_message_text(f"❌ Error: {e}", message.chat.id, msg.message_id, parse_mode='HTML')
 
 # ============================================================
-# UPLOAD HANDLER
+# STOP FILE
 # ============================================================
-@bot.message_handler(content_types=['document'])
-def handle_upload(message):
+@bot.message_handler(func=lambda m: m.text == BTN_STOP)
+def stop_file_cmd(message):
+    user_id = message.chat.id
+    with lock:
+        if user_id not in user_sessions:
+            bot.reply_to(message, "❌ No session!", parse_mode='HTML')
+            return
+        session = user_sessions[user_id]
+    if not session.is_running:
+        bot.reply_to(message, "⚠️ No file running!", parse_mode='HTML')
+        return
+    try:
+        session.is_running = False
+        session.process.terminate()
+        time.sleep(1)
+        if session.process.poll() is None:
+            session.process.kill()
+        session.add_log("⏹ Stopped by user")
+        if session.current_file:
+            end_run_session(user_id, session.current_file)
+        bot.reply_to(message, "⏹ File stopped!", parse_mode='HTML')
+    except Exception as e:
+        bot.reply_to(message, f"❌ Error: {e}", parse_mode='HTML')
+
+# ============================================================
+# VIEW LOGS (FIXED - No stuck)
+# ============================================================
+@bot.message_handler(func=lambda m: m.text == BTN_LOGS)
+def view_logs_cmd(message):
+    user_id = message.chat.id
+    with lock:
+        if user_id not in user_sessions:
+            bot.reply_to(message, "❌ No session!", parse_mode='HTML')
+            return
+        session = user_sessions[user_id]
+    
+    # Direct reply without loading animation to avoid stuck
+    logs = session.get_logs(30)
+    if not logs or logs == "📭 No logs yet.":
+        bot.reply_to(message, "📭 No logs yet.\n▶️ Run a file first.", parse_mode='HTML')
+        return
+    
+    # Send logs directly
+    if len(logs) > 4000:
+        chunks = [logs[i:i+4000] for i in range(0, len(logs), 4000)]
+        bot.reply_to(message, f"📜 Logs (Part 1/{len(chunks)})\n```\n{chunks[0]}\n```", parse_mode='HTML')
+        for i, chunk in enumerate(chunks[1:3], 2):
+            bot.send_message(message.chat.id, f"📜 Logs (Part {i}/{len(chunks)})\n```\n{chunk}\n```", parse_mode='HTML')
+    else:
+        bot.reply_to(message, f"📜 Recent Logs:\n```\n{logs}\n```", parse_mode='HTML')
+
+# ============================================================
+# SEND INPUT (Manual)
+# ============================================================
+@bot.message_handler(func=lambda m: m.text == BTN_INPUT)
+def send_input_cmd(message):
+    user_id = message.chat.id
+    with lock:
+        if user_id not in user_sessions:
+            bot.reply_to(message, "❌ No session!", parse_mode='HTML')
+            return
+        session = user_sessions[user_id]
+    
+    if not session.is_running:
+        bot.reply_to(message, "⚠️ No file running!\nRun a file first.", parse_mode='HTML')
+        return
+    
+    if session.awaiting_input:
+        bot.reply_to(message, "⏳ File is already waiting for input.\nJust reply with the value!", parse_mode='HTML')
+        return
+    
+    msg = bot.reply_to(message, "💬 Send input for your running file:", parse_mode='HTML')
+    session.awaiting_input = True
+    session.input_prompt = "Manual input"
+    bot.register_next_step_handler(msg, process_manual_input, user_id)
+
+def process_manual_input(message, user_id):
+    with lock:
+        if user_id not in user_sessions:
+            return
+        session = user_sessions[user_id]
+    
+    if not session.awaiting_input:
+        bot.reply_to(message, "⚠️ No input needed.", parse_mode='HTML')
+        return
+    
+    if not session.process or not session.is_running:
+        session.awaiting_input = False
+        bot.reply_to(message, "⚠️ File stopped.", parse_mode='HTML')
+        return
+    
+    value = message.text or ""
+    if value.strip().lower() == "/cancel":
+        session.awaiting_input = False
+        bot.reply_to(message, "❎ Cancelled.", parse_mode='HTML')
+        return
+    
+    try:
+        if session.process.stdin:
+            session.process.stdin.write(value + "\n")
+            session.process.stdin.flush()
+            session.awaiting_input = False
+            session.add_log(f"✅ Manual input: {value[:40]}")
+            bot.reply_to(message, f"✅ Input sent!\n`{value[:100]}`", parse_mode='HTML')
+            time.sleep(0.3)
+            logs = session.get_logs(10)
+            if logs and logs != "📭 No logs yet.":
+                bot.send_message(message.chat.id, f"📜 Updated Logs:\n```\n{logs}\n```", parse_mode='HTML')
+    except Exception as e:
+        session.awaiting_input = False
+        session.add_log(f"❌ Input error: {e}")
+        bot.reply_to(message, f"❌ Error: {e}", parse_mode='HTML')
+
+# ============================================================
+# PIP INSTALL
+# ============================================================
+@bot.message_handler(func=lambda m: m.text == BTN_PIP)
+def pip_install_cmd(message):
     user_id = message.chat.id
     if is_banned(user_id):
         bot.reply_to(message, "🚫 You are banned!", parse_mode='HTML')
         return
-    msg = bot.reply_to(message, "⏳ Processing...", parse_mode='HTML')
-    if not message.document or not message.document.file_name.endswith('.py'):
-        bot.edit_message_text("❌ Only .py files allowed!", message.chat.id, msg.message_id, parse_mode='HTML')
+    
+    msg = bot.reply_to(message, "📦 Enter package name to install:\nExample: `requests`", parse_mode='HTML')
+    bot.register_next_step_handler(msg, process_pip_install)
+
+def process_pip_install(message):
+    user_id = message.chat.id
+    package = message.text.strip()
+    
+    if not package:
+        bot.reply_to(message, "❌ No package name!", parse_mode='HTML')
         return
-    if message.document.file_size > 5 * 1024 * 1024:
-        bot.edit_message_text("❌ Max 5MB!", message.chat.id, msg.message_id, parse_mode='HTML')
+    
+    if package.lower() == "/cancel":
+        bot.reply_to(message, "❎ Cancelled.", parse_mode='HTML')
         return
-    conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
-    c = conn.cursor()
-    c.execute('SELECT file_name FROM user_files WHERE user_id = ? AND file_name = ?', (user_id, message.document.file_name))
-    if c.fetchone():
-        conn.close()
-        bot.edit_message_text(f"⚠️ {message.document.file_name} already exists!", message.chat.id, msg.message_id, parse_mode='HTML')
-        return
-    conn.close()
-    for frame in LOADING_FRAMES:
-        time.sleep(0.15)
-        try:
-            bot.edit_message_text(f"📤 {frame}", message.chat.id, msg.message_id)
-        except:
-            pass
+    
+    msg = bot.reply_to(message, f"📦 Installing <code>{package}</code>...", parse_mode='HTML')
+    
     try:
-        file_info = bot.get_file(message.document.file_id)
-        downloaded = bot.download_file(file_info.file_path)
-        file_path = os.path.join(UPLOAD_DIR, f"{user_id}_{message.document.file_name}")
-        with open(file_path, 'wb') as f:
-            f.write(downloaded)
-        conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
-        c = conn.cursor()
-        c.execute('INSERT INTO user_files (user_id, file_name, file_type, approved, uploaded_at) VALUES (?, ?, ?, ?, ?)',
-                  (user_id, message.document.file_name, 'py', 0, datetime.now().isoformat()))
-        conn.commit()
-        conn.close()
-        approve_markup = InlineKeyboardMarkup(row_width=2)
-        approve_markup.add(
-            InlineKeyboardButton("✅ Approve", callback_data=f"approve_{user_id}_{message.document.file_name}"),
-            InlineKeyboardButton("❌ Reject", callback_data=f"reject_{user_id}_{message.document.file_name}")
+        result = subprocess.run(
+            [sys.executable, "-m", "pip", "install", package, "--quiet"],
+            capture_output=True,
+            text=True,
+            timeout=60
         )
-        for admin_id in admin_ids:
-            try:
-                bot.send_message(
-                    admin_id,
-                    f"📩 New File Upload\n👤 User: <code>{user_id}</code>\n📁 File: <code>{message.document.file_name}</code>\n💰 Credits: {get_credits(user_id)}",
-                    reply_markup=approve_markup,
-                    parse_mode='HTML'
-                )
-            except:
-                pass
-        bot.edit_message_text(
-            f"✅ Uploaded: <code>{message.document.file_name}</code>\n⏳ Waiting for admin approval...",
-            message.chat.id,
-            msg.message_id,
-            parse_mode='HTML'
-        )
+        
+        if result.returncode == 0:
+            bot.edit_message_text(
+                f"✅ <code>{package}</code> installed successfully!",
+                message.chat.id,
+                msg.message_id,
+                parse_mode='HTML'
+            )
+        else:
+            error = result.stderr or result.stdout
+            bot.edit_message_text(
+                f"❌ Failed to install <code>{package}</code>:\n```\n{error[:300]}\n```",
+                message.chat.id,
+                msg.message_id,
+                parse_mode='HTML'
+            )
+    except subprocess.TimeoutExpired:
+        bot.edit_message_text(f"⏱️ Installation timed out for <code>{package}</code>", message.chat.id, msg.message_id, parse_mode='HTML')
     except Exception as e:
         bot.edit_message_text(f"❌ Error: {e}", message.chat.id, msg.message_id, parse_mode='HTML')
 
 # ============================================================
+# CREDITS
+# ============================================================
+@bot.message_handler(func=lambda m: m.text == BTN_CREDITS)
+def credits_cmd(message):
+    user_id = message.chat.id
+    credits = get_credits(user_id)
+    referral_count = get_referral_count(user_id)
+    
+    text = f"""
+💰 {ms('Your Credits')}
+━━━━━━━━━━━━━━━━━━━━━
+👤 {ms('User:')} {message.from_user.first_name}
+💳 {ms('Credits:')} {credits}
+🤝 {ms('Referrals:')} {referral_count}
+━━━━━━━━━━━━━━━━━━━━━
+{ms('📌 How to get more:')}
+• 🎁 {ms('Daily Bonus: 2 credits/24h')}
+• 🤝 {ms('Refer & Earn: +2 credits/referral')}
+• 👑 {ms('Contact admin for extra credits')}
+━━━━━━━━━━━━━━━━━━━━━
+"""
+    bot.reply_to(message, text, parse_mode='HTML')
+
+# ============================================================
+# DAILY BONUS
+# ============================================================
+@bot.message_handler(func=lambda m: m.text == BTN_BONUS)
+def daily_bonus_cmd(message):
+    user_id = message.chat.id
+    if is_banned(user_id):
+        bot.reply_to(message, "🚫 You are banned!", parse_mode='HTML')
+        return
+    
+    if can_claim_daily_bonus(user_id):
+        claimed, new_credits = claim_daily_bonus(user_id)
+        if claimed:
+            bot.reply_to(
+                message,
+                f"🎁 {ms('Daily Bonus Claimed!')}\n✅ {ms('+2 credits added!')}\n💰 {ms('Total credits:')} {new_credits}\n⏳ {ms('Next bonus: 24 hours')}",
+                parse_mode='HTML'
+            )
+        else:
+            bot.reply_to(message, "❌ Failed to claim bonus.", parse_mode='HTML')
+    else:
+        bot.reply_to(message, "⏳ Daily Bonus already claimed!\n🕐 Next claim in: 24 hours", parse_mode='HTML')
+
+# ============================================================
+# REFER & EARN
+# ============================================================
+@bot.message_handler(func=lambda m: m.text == BTN_REFER)
+def refer_cmd(message):
+    user_id = message.chat.id
+    if is_banned(user_id):
+        bot.reply_to(message, "🚫 You are banned!", parse_mode='HTML')
+        return
+    
+    ref_code = get_referral_code(user_id)
+    bot_username = bot.get_me().username
+    ref_link = f"https://t.me/{bot_username}?start={ref_code}"
+    referral_count = get_referral_count(user_id)
+    pending_count = get_pending_referrals(user_id)
+    
+    text = f"""
+🤝 {ms('Refer & Earn Credits!')}
+━━━━━━━━━━━━━━━━━━━━━
+📊 {ms('Your Referrals:')} {referral_count}
+⏳ {ms('Pending:')} {pending_count}
+💰 {ms('Per Referral: +2 credits')}
+━━━━━━━━━━━━━━━━━━━━━
+🔗 {ms('Your Referral Link:')}
+<code>{ref_link}</code>
+━━━━━━━━━━━━━━━━━━━━━
+📌 {ms('How it works:')}
+1️⃣ {ms('Share your link with friends')}
+2️⃣ {ms('They join using your link')}
+3️⃣ {ms('You get +2 credits instantly!')}
+━━━━━━━━━━━━━━━━━━━━━
+"""
+    markup = InlineKeyboardMarkup()
+    markup.add(InlineKeyboardButton("📋 Copy Link", callback_data=f"copy_{user_id}"))
+    bot.reply_to(message, text, reply_markup=markup, parse_mode='HTML')
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith('copy_'))
+def copy_link(call):
+    user_id = int(call.data.split('_')[1])
+    if call.from_user.id != user_id:
+        bot.answer_callback_query(call.id, "⚠️ Not your link!", show_alert=True)
+        return
+    ref_code = get_referral_code(user_id)
+    bot_username = bot.get_me().username
+    ref_link = f"https://t.me/{bot_username}?start={ref_code}"
+    bot.answer_callback_query(call.id, "📋 Link copied!", show_alert=True)
+    bot.send_message(call.message.chat.id, f"🔗 Your Referral Link:\n<code>{ref_link}</code>", parse_mode='HTML')
+
+# ============================================================
+# PROFILE
+# ============================================================
+@bot.message_handler(func=lambda m: m.text == BTN_PROFILE)
+def profile_cmd(message):
+    user_id = message.chat.id
+    if is_banned(user_id):
+        bot.reply_to(message, "🚫 You are banned!", parse_mode='HTML')
+        return
+    
+    credits = get_credits(user_id)
+    referral_count = get_referral_count(user_id)
+    
+    conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
+    c = conn.cursor()
+    c.execute('SELECT COUNT(*) FROM user_files WHERE user_id = ?', (user_id,))
+    total_files = c.fetchone()[0]
+    c.execute('SELECT COUNT(*) FROM user_files WHERE user_id = ? AND approved = 1', (user_id,))
+    approved_files = c.fetchone()[0]
+    conn.close()
+    
+    admin_status = "👑 Admin" if is_admin(user_id) else "👤 User"
+    
+    text = f"""
+👤 {ms('Your Profile')}
+━━━━━━━━━━━━━━━━━━━━━
+🆔 {ms('ID:')} <code>{user_id}</code>
+🎫 {ms('Role:')} {admin_status}
+💰 {ms('Credits:')} {credits}
+📁 {ms('Files:')} {total_files} (✅ {approved_files} {ms('approved')})
+🤝 {ms('Referrals:')} {referral_count}
+━━━━━━━━━━━━━━━━━━━━━
+"""
+    bot.reply_to(message, text, parse_mode='HTML')
+
+# ============================================================
+# MY FILES
+# ============================================================
+@bot.message_handler(func=lambda m: m.text == BTN_FILES)
+def my_files_cmd(message):
+    user_id = message.chat.id
+    if is_banned(user_id):
+        bot.reply_to(message, "🚫 You are banned!", parse_mode='HTML')
+        return
+    
+    conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
+    c = conn.cursor()
+    c.execute('SELECT file_name, approved FROM user_files WHERE user_id = ?', (user_id,))
+    files = c.fetchall()
+    conn.close()
+    
+    if not files:
+        bot.reply_to(message, "📭 No files uploaded.\n\nUse Upload File button.", parse_mode='HTML')
+        return
+    
+    text = "📂 Your Files:\n━━━━━━━━━━━━━━━━━━━━━\n"
+    for file_name, approved in files:
+        status = "✅ Approved" if approved else "⏳ Pending"
+        text += f"📄 {file_name} — {status}\n"
+    bot.reply_to(message, text, parse_mode='HTML')
+
+# ============================================================
+# CONTACT
+# ============================================================
+@bot.message_handler(func=lambda m: m.text == BTN_CONTACT)
+def contact_cmd(message):
+    markup = InlineKeyboardMarkup()
+    markup.add(
+        InlineKeyboardButton("👑 @SunrakuV2", url="https://t.me/SunrakuV2"),
+        InlineKeyboardButton("📢 @Anishpy", url="https://t.me/Anishpy"),
+        InlineKeyboardButton("📢 @VOUCH_R", url="https://t.me/VOUCH_R")
+    )
+    bot.reply_to(
+        message,
+        "📞 Contact & Support\n━━━━━━━━━━━━━━━━━━━━━\nClick below to connect:",
+        reply_markup=markup,
+        parse_mode='HTML'
+    )
+
+# ============================================================
+# ADMIN PANEL
+# ============================================================
+@bot.message_handler(func=lambda m: m.text == BTN_ADMIN)
+def admin_panel_cmd(message):
+    user_id = message.chat.id
+    if not is_admin(user_id):
+        bot.reply_to(message, "⚠️ Admin only!", parse_mode='HTML')
+        return
+    
+    markup = InlineKeyboardMarkup(row_width=2)
+    markup.add(
+        InlineKeyboardButton("💰 Add Credits", callback_data="admin_add_credits"),
+        InlineKeyboardButton("👑 Add Admin", callback_data="admin_add_admin")
+    )
+    markup.add(
+        InlineKeyboardButton("📢 Broadcast", callback_data="admin_broadcast"),
+        InlineKeyboardButton("📊 Stats", callback_data="admin_stats")
+    )
+    markup.add(
+        InlineKeyboardButton("🚫 Ban User", callback_data="admin_ban"),
+        InlineKeyboardButton("✅ Unban User", callback_data="admin_unban")
+    )
+    markup.add(
+        InlineKeyboardButton("📋 Banned List", callback_data="admin_banned_list"),
+        InlineKeyboardButton("📁 All Files", callback_data="admin_all_files")
+    )
+    markup.add(
+        InlineKeyboardButton("👥 Users List", callback_data="admin_users_list")
+    )
+    bot.reply_to(message, "👑 Admin Panel", reply_markup=markup, parse_mode='HTML')
+
+# ============================================================
 # ADMIN CALLBACKS
 # ============================================================
-@bot.callback_query_handler(func=lambda c: c.data.startswith('approve_'))
-def approve_file(call):
-    if not is_admin(call.from_user.id):
-        bot.answer_callback_query(call.id, "⚠️ Admin only!", show_alert=True)
-        return
-    parts = call.data.split('_')
-    user_id = int(parts[1])
-    file_name = '_'.join(parts[2:])
-    conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
-    c = conn.cursor()
-    c.execute('UPDATE user_files SET approved = 1 WHERE user_id = ? AND file_name = ?', (user_id, file_name))
-    conn.commit()
-    conn.close()
-    bot.answer_callback_query(call.id, "✅ Approved!")
-    bot.edit_message_text(f"✅ Approved: <code>{file_name}</code>", call.message.chat.id, call.message.message_id, parse_mode='HTML')
-    bot.send_message(user_id, f"✅ Your file <code>{file_name}</code> has been approved!\n▶️ Use Run File button to start.", parse_mode='HTML')
-
-@bot.callback_query_handler(func=lambda c: c.data.startswith('reject_'))
-def reject_file(call):
-    if not is_admin(call.from_user.id):
-        bot.answer_callback_query(call.id, "⚠️ Admin only!", show_alert=True)
-        return
-    parts = call.data.split('_')
-    user_id = int(parts[1])
-    file_name = '_'.join(parts[2:])
-    conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
-    c = conn.cursor()
-    c.execute('DELETE FROM user_files WHERE user_id = ? AND file_name = ?', (user_id, file_name))
-    conn.commit()
-    conn.close()
-    file_path = os.path.join(UPLOAD_DIR, f"{user_id}_{file_name}")
-    if os.path.exists(file_path):
-        os.remove(file_path)
-    bot.answer_callback_query(call.id, "❌ Rejected!")
-    bot.edit_message_text(f"❌ Rejected: <code>{file_name}</code>", call.message.chat.id, call.message.message_id, parse_mode='HTML')
-    bot.send_message(user_id, f"❌ Your file <code>{file_name}</code> was rejected.\n📞 Contact @SunrakuV2 for details.", parse_mode='HTML')
-
 @bot.callback_query_handler(func=lambda c: c.data == "admin_add_credits")
 def admin_add_credits(call):
     if not is_admin(call.from_user.id):
@@ -1070,9 +1300,12 @@ def process_add_admin(message):
         return
     try:
         user_id = int(message.text.strip())
+        if user_id in admin_ids:
+            bot.reply_to(message, f"⚠️ <code>{user_id}</code> is already admin!", parse_mode='HTML')
+            return
         conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
         c = conn.cursor()
-        c.execute('INSERT OR IGNORE INTO admins (user_id) VALUES (?)', (user_id,))
+        c.execute('INSERT INTO admins (user_id) VALUES (?)', (user_id,))
         conn.commit()
         conn.close()
         load_admins()
@@ -1099,12 +1332,17 @@ def process_broadcast(message):
     failed = 0
     for user_id in users:
         try:
-            bot.send_message(user_id, f"📢 Broadcast:\n\n{message.text}", parse_mode='HTML')
+            bot.send_message(user_id, f"📢 {ms('Broadcast:')}\n\n{message.text}", parse_mode='HTML')
             sent += 1
         except:
             failed += 1
         time.sleep(0.05)
-    bot.edit_message_text(f"✅ Broadcast done!\n📤 Sent: {sent}\n❌ Failed: {failed}", message.chat.id, msg.message_id, parse_mode='HTML')
+    bot.edit_message_text(
+        f"✅ {ms('Broadcast done!')}\n📤 {ms('Sent:')} {sent}\n❌ {ms('Failed:')} {failed}",
+        message.chat.id,
+        msg.message_id,
+        parse_mode='HTML'
+    )
 
 @bot.callback_query_handler(func=lambda c: c.data == "admin_stats")
 def admin_stats(call):
@@ -1112,6 +1350,7 @@ def admin_stats(call):
         bot.answer_callback_query(call.id, "⚠️ Admin only!", show_alert=True)
         return
     bot.answer_callback_query(call.id)
+    
     conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
     c = conn.cursor()
     c.execute('SELECT COUNT(*) FROM users')
@@ -1122,14 +1361,18 @@ def admin_stats(call):
     approved_files = c.fetchone()[0]
     c.execute('SELECT COUNT(*) FROM admins')
     total_admins = c.fetchone()[0]
+    c.execute('SELECT SUM(credits) FROM users')
+    total_credits = c.fetchone()[0] or 0
     conn.close()
+    
     text = f"""
-📊 System Stats
+📊 {ms('System Stats')}
 ━━━━━━━━━━━━━━━━━━━━━
-👥 Total Users: {total_users}
-📁 Total Files: {total_files}
-✅ Approved: {approved_files}
-👑 Admins: {total_admins}
+👥 {ms('Total Users:')} {total_users}
+📁 {ms('Total Files:')} {total_files}
+✅ {ms('Approved:')} {approved_files}
+👑 {ms('Admins:')} {total_admins}
+💰 {ms('Total Credits:')} {total_credits}
 ━━━━━━━━━━━━━━━━━━━━━
 """
     bot.send_message(call.message.chat.id, text, parse_mode='HTML')
@@ -1150,6 +1393,9 @@ def process_ban(message):
         user_id = int(message.text.strip())
         if user_id == OWNER_ID:
             bot.reply_to(message, "❌ Cannot ban owner!", parse_mode='HTML')
+            return
+        if is_banned(user_id):
+            bot.reply_to(message, f"⚠️ <code>{user_id}</code> is already banned!", parse_mode='HTML')
             return
         ban_user(user_id)
         bot.reply_to(message, f"🚫 User <code>{user_id}</code> banned!", parse_mode='HTML')
@@ -1174,6 +1420,9 @@ def process_unban(message):
         return
     try:
         user_id = int(message.text.strip())
+        if not is_banned(user_id):
+            bot.reply_to(message, f"⚠️ <code>{user_id}</code> is not banned!", parse_mode='HTML')
+            return
         unban_user(user_id)
         bot.reply_to(message, f"✅ User <code>{user_id}</code> unbanned!", parse_mode='HTML')
         try:
@@ -1189,62 +1438,102 @@ def admin_banned_list(call):
         bot.answer_callback_query(call.id, "⚠️ Admin only!", show_alert=True)
         return
     bot.answer_callback_query(call.id)
+    
     conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
     c = conn.cursor()
-    c.execute('SELECT user_id FROM users WHERE is_banned = 1')
+    c.execute('SELECT user_id, username FROM users WHERE is_banned = 1')
     banned = c.fetchall()
     conn.close()
+    
     if not banned:
         bot.send_message(call.message.chat.id, "📭 No banned users.", parse_mode='HTML')
     else:
         text = "🚫 Banned Users:\n━━━━━━━━━━━━━━━━━━━━━\n"
-        for user_id in banned:
-            text += f"• <code>{user_id[0]}</code>\n"
+        for user_id, username in banned:
+            uname = f"@{username}" if username else "N/A"
+            text += f"• <code>{user_id}</code> ({uname})\n"
         bot.send_message(call.message.chat.id, text, parse_mode='HTML')
 
-# ============================================================
-# RUN CALLBACK
-# ============================================================
-@bot.callback_query_handler(func=lambda c: c.data.startswith('run_'))
-def run_selected_file(call):
-    parts = call.data.split('_')
-    user_id = int(parts[1])
-    file_name = '_'.join(parts[2:])
-    if call.from_user.id != user_id:
-        bot.answer_callback_query(call.id, "⚠️ Not your file!", show_alert=True)
+@bot.callback_query_handler(func=lambda c: c.data == "admin_users_list")
+def admin_users_list(call):
+    if not is_admin(call.from_user.id):
+        bot.answer_callback_query(call.id, "⚠️ Admin only!", show_alert=True)
         return
     bot.answer_callback_query(call.id)
-    if can_run_free(user_id, file_name):
-        bot.send_message(call.message.chat.id, f"🔄 Free run!\n<code>{file_name}</code>\n⏳ 7-hour session active", parse_mode='HTML')
-        run_file(call.message, file_name, free=True)
+    
+    conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
+    c = conn.cursor()
+    c.execute('SELECT user_id, username, credits FROM users ORDER BY user_id')
+    users = c.fetchall()
+    conn.close()
+    
+    if not users:
+        bot.send_message(call.message.chat.id, "📭 No users found.", parse_mode='HTML')
         return
-    credits = get_credits(user_id)
-    if credits <= 0:
-        bot.send_message(call.message.chat.id, "❌ Insufficient credits!\n💰 Use Daily Bonus or Refer & Earn", parse_mode='HTML')
+    
+    text = "👥 Users List:\n━━━━━━━━━━━━━━━━━━━━━\n"
+    for user_id, username, credits in users[:20]:
+        uname = f"@{username}" if username else "N/A"
+        text += f"• <code>{user_id}</code> | {uname} | 💰{credits}\n"
+    
+    if len(users) > 20:
+        text += f"\n... and {len(users)-20} more users"
+    
+    bot.send_message(call.message.chat.id, text, parse_mode='HTML')
+
+@bot.callback_query_handler(func=lambda c: c.data == "admin_all_files")
+def admin_all_files(call):
+    if not is_admin(call.from_user.id):
+        bot.answer_callback_query(call.id, "⚠️ Admin only!", show_alert=True)
         return
-    bot.send_message(call.message.chat.id, f"🚀 Starting: <code>{file_name}</code> (1 credit)", parse_mode='HTML')
-    run_file(call.message, file_name, free=False)
+    bot.answer_callback_query(call.id)
+    
+    conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
+    c = conn.cursor()
+    c.execute('SELECT user_id, file_name, approved FROM user_files ORDER BY user_id')
+    files = c.fetchall()
+    conn.close()
+    
+    if not files:
+        bot.send_message(call.message.chat.id, "📭 No files found.", parse_mode='HTML')
+        return
+    
+    text = "📁 All Files:\n━━━━━━━━━━━━━━━━━━━━━\n"
+    for user_id, file_name, approved in files[:30]:
+        status = "✅" if approved else "⏳"
+        text += f"• <code>{user_id}</code> | {status} {file_name}\n"
+    
+    if len(files) > 30:
+        text += f"\n... and {len(files)-30} more files"
+    
+    bot.send_message(call.message.chat.id, text, parse_mode='HTML')
 
 # ============================================================
 # START BOT
 # ============================================================
 print("""
-╔═══════════════════════════════════════════════════╗
-║   ☠️ SUNRAKU — ULTIMATE FILE RUNNER BOT           ║
-║   ✅ Upload .py files                            ║
-║   ✅ Auto input detection                        ║
-║   ✅ Credit System                               ║
-║   ✅ Daily Bonus (2 credits/24h)                 ║
-║   ✅ Refer & Earn (+2 credits)                   ║
-║   ✅ 1 Credit = 7 Hours Run                      ║
-║   ✅ Broadcast System                            ║
-║   ✅ Admin Panel                                 ║
-║   ✅ Mixed Serif Font (𝐀ɴɪsʜ style)              ║
-║   👑 @SunrakuV2 | 📢 @Anishpy                   ║
-╚═══════════════════════════════════════════════════╝
+╔═══════════════════════════════════════════════════════════════╗
+║   ☠️ 𝑺𝑼𝑵𝑹𝑨𝑲𝑼 — 𝑼𝑳𝑻𝑰𝑴𝑨𝑻𝑬 𝑭𝑰𝑳𝑬 𝑹𝑼𝑵𝑵𝑬𝑹 𝑩𝑶𝑻             ║
+║   ✅ Upload .py files                                        ║
+║   ✅ Auto input detection                                    ║
+║   ✅ Send Input (Manual)                                     ║
+║   ✅ Pip Install                                             ║
+║   ✅ View Logs                                               ║
+║   ✅ Credit System (10 free)                                 ║
+║   ✅ 1 Credit = 7 Hours Run                                  ║
+║   ✅ Daily Bonus (2 credits/24h)                             ║
+║   ✅ Refer & Earn (+2 credits per referral)                  ║
+║   ✅ Admin Panel                                             ║
+║   ✅ Add Admin System                                        ║
+║   ✅ Broadcast System                                        ║
+║   ✅ Ban/Unban System                                        ║
+║   ✅ Mixed Serif Font (𝐀ɴɪsʜ style)                          ║
+║   👑 @SunrakuV2 | 📢 @Anishpy                               ║
+╚═══════════════════════════════════════════════════════════════╝
 """)
 print(f"✅ Bot running...")
 print(f"👑 Owner: @SunrakuV2")
+print(f"📢 Channel: @Anishpy | @VOUCH_R")
 
 while True:
     try:
