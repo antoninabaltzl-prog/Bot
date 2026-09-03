@@ -1,21 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-☠️ 𝑺𝑼𝑵𝑹𝑨𝑲𝑼 — 𝑼𝑳𝑻𝑰𝑴𝑨𝑻𝑬 𝑭𝑰𝑳𝑬 𝑹𝑼𝑵𝑵𝑬𝑹 𝑩𝑶𝑻 ☠️
+☠️ 𝑺𝑼𝑵𝑹𝑨𝑲𝑼 — 𝑷𝑹𝑬𝑴𝑰𝑼𝑴 𝑭𝑰𝑳𝑬 𝑹𝑼𝑵𝑵𝑬𝑹 𝑩𝑶𝑻 ☠️
 ✅ Upload .py files
 ✅ Auto input detection
-✅ Send Input (Manual)
-✅ Pip Install
-✅ View Logs (Fixed - No stuck)
-✅ Credit System (10 free)
-✅ 1 Credit = 7 Hours Run
-✅ Daily Bonus (2 credits/24h)
-✅ Refer & Earn (+2 credits per referral)
+✅ View Logs (FIXED - Using session.logs)
+✅ Credit System
+✅ Daily Bonus
+✅ Refer & Earn
+✅ 1 Credit = 7 Hours
 ✅ Admin Panel
-✅ Add Admin System
-✅ Broadcast System
-✅ Ban/Unban System
-✅ Mixed Serif Font (𝐀ɴɪsʜ style)
 👑 Owner: @SunrakuV2 | ID: 8641613327
 📢 Channel: @Anishpy | @VOUCH_R
 """
@@ -55,28 +49,24 @@ BTN_INPUT = "💬 Send Input"
 BTN_PIP = "📦 Pip Install"
 
 # ============================================================
-# MIXED SERIF FONT
+# PREMIUM FONT
 # ============================================================
-def ms(text):
+def pf(text):
     bold_serif = {
         'A': '𝐀', 'B': '𝐁', 'C': '𝐂', 'D': '𝐃', 'E': '𝐄', 'F': '𝐅', 'G': '𝐆',
         'H': '𝐇', 'I': '𝐈', 'J': '𝐉', 'K': '𝐊', 'L': '𝐋', 'M': '𝐌', 'N': '𝐍',
         'O': '𝐎', 'P': '𝐏', 'Q': '𝐐', 'R': '𝐑', 'S': '𝐒', 'T': '𝐓', 'U': '𝐔',
-        'V': '𝐕', 'W': '𝐖', 'X': '𝐗', 'Y': '𝐘', 'Z': '𝐙',
-        'a': '𝐚', 'b': '𝐛', 'c': '𝐜', 'd': '𝐝', 'e': '𝐞', 'f': '𝐟', 'g': '𝐠',
-        'h': '𝐡', 'i': '𝐢', 'j': '𝐣', 'k': '𝐤', 'l': '𝐥', 'm': '𝐦', 'n': '𝐧',
-        'o': '𝐨', 'p': '𝐩', 'q': '𝐪', 'r': '𝐫', 's': '𝐬', 't': '𝐭', 'u': '𝐮',
-        'v': '𝐯', 'w': '𝐰', 'x': '𝐱', 'y': '𝐲', 'z': '𝐳'
+        'V': '𝐕', 'W': '𝐖', 'X': '𝐗', 'Y': '𝐘', 'Z': '𝐙'
     }
-    light_serif = {
-        'A': '𝐴', 'B': '𝐵', 'C': '𝐶', 'D': '𝐷', 'E': '𝐸', 'F': '𝐹', 'G': '𝐺',
-        'H': '𝐻', 'I': '𝐼', 'J': '𝐽', 'K': '𝐾', 'L': '𝐿', 'M': '𝑀', 'N': '𝑁',
-        'O': '𝑂', 'P': '𝑃', 'Q': '𝑄', 'R': '𝑅', 'S': '𝑆', 'T': '𝑇', 'U': '𝑈',
-        'V': '𝑉', 'W': '𝑊', 'X': '𝑋', 'Y': '𝑌', 'Z': '𝑍',
-        'a': '𝑎', 'b': '𝑏', 'c': '𝑐', 'd': '𝑑', 'e': '𝑒', 'f': '𝑓', 'g': '𝑔',
-        'h': 'ℎ', 'i': '𝑖', 'j': '𝑗', 'k': '𝑘', 'l': '𝑙', 'm': '𝑚', 'n': '𝑛',
-        'o': '𝑜', 'p': '𝑝', 'q': '𝑞', 'r': '𝑟', 's': '𝑠', 't': '𝑡', 'u': '𝑢',
-        'v': '𝑣', 'w': '𝑤', 'x': '𝑥', 'y': '𝑦', 'z': '𝑧'
+    small_caps = {
+        'a': 'ᴀ', 'b': 'ʙ', 'c': 'ᴄ', 'd': 'ᴅ', 'e': 'ᴇ', 'f': 'ꜰ', 'g': 'ɢ',
+        'h': 'ʜ', 'i': 'ɪ', 'j': 'ᴊ', 'k': 'ᴋ', 'l': 'ʟ', 'm': 'ᴍ', 'n': 'ɴ',
+        'o': 'ᴏ', 'p': 'ᴘ', 'q': 'ǫ', 'r': 'ʀ', 's': 's', 't': 'ᴛ', 'u': 'ᴜ',
+        'v': 'ᴠ', 'w': 'ᴡ', 'x': 'x', 'y': 'ʏ', 'z': 'ᴢ',
+        'A': 'ᴀ', 'B': 'ʙ', 'C': 'ᴄ', 'D': 'ᴅ', 'E': 'ᴇ', 'F': 'ꜰ', 'G': 'ɢ',
+        'H': 'ʜ', 'I': 'ɪ', 'J': 'ᴊ', 'K': 'ᴋ', 'L': 'ʟ', 'M': 'ᴍ', 'N': 'ɴ',
+        'O': 'ᴏ', 'P': 'ᴘ', 'Q': 'ǫ', 'R': 'ʀ', 'S': 's', 'T': 'ᴛ', 'U': 'ᴜ',
+        'V': 'ᴠ', 'W': 'ᴡ', 'X': 'x', 'Y': 'ʏ', 'Z': 'ᴢ'
     }
     
     words = str(text).split(' ')
@@ -88,14 +78,14 @@ def ms(text):
         converted = []
         for i, char in enumerate(word):
             if i == 0:
-                converted.append(bold_serif.get(char, char))
+                converted.append(bold_serif.get(char.upper(), char))
             else:
-                converted.append(light_serif.get(char, char))
+                converted.append(small_caps.get(char.lower(), char))
         result.append(''.join(converted))
     return ' '.join(result)
 
 # ============================================================
-# CONFIG - ADMIN ID SET
+# CONFIG
 # ============================================================
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 if not BOT_TOKEN:
@@ -103,7 +93,7 @@ if not BOT_TOKEN:
     sys.exit()
 
 bot = TeleBot(BOT_TOKEN, parse_mode='HTML')
-OWNER_ID = 8641613327  # 🔥 YOUR ADMIN ID
+OWNER_ID = 8641613327
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 UPLOAD_DIR = os.path.join(BASE_DIR, 'uploads')
@@ -347,7 +337,7 @@ def can_run_free(user_id, file_name):
     return datetime.now() - start_time < timedelta(hours=7)
 
 # ============================================================
-# USER SESSION
+# USER SESSION (WITH LOGS STORAGE)
 # ============================================================
 class UserSession:
     def __init__(self, chat_id):
@@ -356,46 +346,44 @@ class UserSession:
         self.process = None
         self.is_running = False
         self.is_approved = False
-        self.logs = []
+        self.logs = []  # 🔥 LOGS STORE HERE
         self.start_time = None
+        self.end_time = None
+        self.speed = 0
         self.total_checks = 0
         self.awaiting_input = False
+        self.input_prompt = ""
+        self.files = []
         self.current_file = None
         
     def add_log(self, msg):
+        """Add log with timestamp - LIKE ORIGINAL FILE"""
         timestamp = datetime.now().strftime("%H:%M:%S")
         self.logs.append(f"[{timestamp}] {msg}")
         if len(self.logs) > 500:
             self.logs.pop(0)
             
     def get_logs(self, lines=30):
-        return "\n".join(self.logs[-lines:]) if self.logs else "📭 No logs yet."
-
-# ============================================================
-# LOADING ANIMATION
-# ============================================================
-def send_loading(message, frames=None, delay=0.15):
-    if frames is None:
-        frames = [
-            "🔄 Loading ■□□□□□□□□□ 0%",
-            "🔄 Loading ■■□□□□□□□□ 20%",
-            "🔄 Loading ■■■□□□□□□□ 40%",
-            "🔄 Loading ■■■■□□□□□□ 50%",
-            "🔄 Loading ■■■■■□□□□□ 60%",
-            "🔄 Loading ■■■■■■□□□□ 70%",
-            "🔄 Loading ■■■■■■■□□□ 80%",
-            "🔄 Loading ■■■■■■■■□□ 90%",
-            "✅ Done! ■■■■■■■■■■ 100%"
-        ]
+        """Get recent logs - LIKE ORIGINAL FILE"""
+        if not self.logs:
+            return "📭 No logs yet."
+        return "\n".join(self.logs[-lines:])
     
-    msg = bot.reply_to(message, frames[0])
-    for frame in frames[1:]:
-        time.sleep(delay)
-        try:
-            bot.edit_message_text(frame, message.chat.id, msg.message_id)
-        except:
-            pass
-    return msg
+    def get_runtime(self):
+        if self.start_time:
+            end_time = self.end_time or datetime.now()
+            diff = end_time - self.start_time
+            return str(diff).split('.')[0]
+        return "N/A"
+    
+    def get_speed(self):
+        if self.start_time and self.total_checks > 0:
+            end_time = self.end_time or datetime.now()
+            runtime_seconds = max((end_time - self.start_time).total_seconds(), 1)
+            speed = int((self.total_checks / runtime_seconds) * 60)
+            self.speed = speed
+            return speed
+        return self.speed or 0
 
 # ============================================================
 # INPUT DETECTION
@@ -422,7 +410,7 @@ def ask_user_for_input(session, prompt):
     if session.awaiting_input:
         return
     session.awaiting_input = True
-    session.add_log("⏳ Waiting for input...")
+    session.add_log(f"⏳ Waiting for input: {prompt[:50]}...")
     try:
         logs = session.get_logs(15)
         if logs and logs != "📭 No logs yet.":
@@ -504,7 +492,7 @@ def start_cmd(message):
     user_id = message.chat.id
     
     if is_banned(user_id):
-        bot.reply_to(message, "🚫 You are banned!", parse_mode='HTML')
+        bot.reply_to(message, pf("🚫 You are banned!"), parse_mode='HTML')
         return
     
     add_user(user_id, message.from_user.username)
@@ -521,27 +509,27 @@ def start_cmd(message):
                 referrer_id = int(ref_code.replace('SUNRAKU', '')[:-3])
                 if referrer_id != user_id and add_referral(referrer_id, user_id):
                     if credit_referral(referrer_id):
-                        bot.send_message(referrer_id, "🎉 You got +2 credits!", parse_mode='HTML')
-                    bot.reply_to(message, "🎉 You were referred! Referrer got +2 credits!", parse_mode='HTML')
+                        bot.send_message(referrer_id, pf("🎉 You got +2 credits!"), parse_mode='HTML')
+                    bot.reply_to(message, pf("🎉 You were referred! Referrer got +2 credits!"), parse_mode='HTML')
             except:
                 pass
     
     credits = get_credits(user_id)
-    admin_status = "👑 Admin" if is_admin(user_id) else "👤 User"
+    admin_status = pf("👑 Admin") if is_admin(user_id) else pf("👤 User")
     
     welcome = f"""
-☠️ {ms('SUNRAKU — ULTIMATE FILE RUNNER BOT')} ☠️
-━━━━━━━━━━━━━━━━━━━━━
-👤 {ms('User:')} {message.from_user.first_name}
-🎫 {ms('Role:')} {admin_status}
-💰 {ms('Credits:')} {credits}
-━━━━━━━━━━━━━━━━━━━━━
-📤 {ms('Upload .py file (1 credit per 7h)')}
-▶️ {ms('Run approved file')}
-🎁 {ms('Daily Bonus: 2 credits (24h)')}
-🤝 {ms('Refer & Earn: +2 credits per referral')}
-━━━━━━━━━━━━━━━━━━━━━
-👑 @SunrakuV2 | 📢 @Anishpy
+{pf('☠️ S U N R A K U — P R E M I U M  F I L E  R U N N E R')} ☠️
+◈◆◈◆◈◆◈◆◈◆◈◆◈◆◈◆◈◆◈◆◈
+{pf('👤 User:')} {message.from_user.first_name}
+{pf('🎫 Role:')} {admin_status}
+{pf('💰 Credits:')} {credits}
+◈◆◈◆◈◆◈◆◈◆◈◆◈◆◈◆◈◆◈◆◈
+{pf('✦ Upload .py file (1 credit/7h)')}
+{pf('✦ Run approved file')}
+{pf('✦ Daily Bonus: +2 credits (24h)')}
+{pf('✦ Refer & Earn: +2 credits/ref')}
+◈◆◈◆◈◆◈◆◈◆◈◆◈◆◈◆◈◆◈◆◈
+{pf('♛ @SunrakuV2')} | {pf('✦ @Anishpy')}
 """
     bot.reply_to(message, welcome, reply_markup=main_menu(user_id), parse_mode='HTML')
 
@@ -552,24 +540,24 @@ def start_cmd(message):
 def upload_file_cmd(message):
     user_id = message.chat.id
     if is_banned(user_id):
-        bot.reply_to(message, "🚫 You are banned!", parse_mode='HTML')
+        bot.reply_to(message, pf("🚫 You are banned!"), parse_mode='HTML')
         return
-    bot.reply_to(message, "📤 Send your .py file", parse_mode='HTML')
+    bot.reply_to(message, pf("📤 Send your .py file"), parse_mode='HTML')
     bot.register_next_step_handler(message, handle_upload)
 
 @bot.message_handler(content_types=['document'])
 def handle_upload(message):
     user_id = message.chat.id
     if is_banned(user_id):
-        bot.reply_to(message, "🚫 You are banned!", parse_mode='HTML')
+        bot.reply_to(message, pf("🚫 You are banned!"), parse_mode='HTML')
         return
     
     if not message.document or not message.document.file_name.endswith('.py'):
-        bot.reply_to(message, "❌ Only .py files allowed!", parse_mode='HTML')
+        bot.reply_to(message, pf("❌ Only .py files allowed!"), parse_mode='HTML')
         return
     
     if message.document.file_size > 5 * 1024 * 1024:
-        bot.reply_to(message, "❌ Max 5MB!", parse_mode='HTML')
+        bot.reply_to(message, pf("❌ Max 5MB!"), parse_mode='HTML')
         return
     
     conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
@@ -578,11 +566,11 @@ def handle_upload(message):
               (user_id, message.document.file_name))
     if c.fetchone():
         conn.close()
-        bot.reply_to(message, f"⚠️ {message.document.file_name} already exists!", parse_mode='HTML')
+        bot.reply_to(message, pf(f"⚠️ {message.document.file_name} already exists!"), parse_mode='HTML')
         return
     conn.close()
     
-    msg = bot.reply_to(message, "📤 Uploading...", parse_mode='HTML')
+    msg = bot.reply_to(message, pf("📤 Uploading..."), parse_mode='HTML')
     
     try:
         file_info = bot.get_file(message.document.file_id)
@@ -600,15 +588,15 @@ def handle_upload(message):
         
         approve_markup = InlineKeyboardMarkup(row_width=2)
         approve_markup.add(
-            InlineKeyboardButton("✅ Approve", callback_data=f"approve_{user_id}_{message.document.file_name}"),
-            InlineKeyboardButton("❌ Reject", callback_data=f"reject_{user_id}_{message.document.file_name}")
+            InlineKeyboardButton(pf("✅ Approve"), callback_data=f"approve_{user_id}_{message.document.file_name}"),
+            InlineKeyboardButton(pf("❌ Reject"), callback_data=f"reject_{user_id}_{message.document.file_name}")
         )
         
         for admin_id in admin_ids:
             try:
                 bot.send_message(
                     admin_id,
-                    f"📩 New File Upload\n👤 User: <code>{user_id}</code>\n📁 File: <code>{message.document.file_name}</code>\n💰 Credits: {get_credits(user_id)}",
+                    f"{pf('📩 New File Upload')}\n{pf('👤 User:')} <code>{user_id}</code>\n{pf('📁 File:')} <code>{message.document.file_name}</code>\n{pf('💰 Credits:')} {get_credits(user_id)}",
                     reply_markup=approve_markup,
                     parse_mode='HTML'
                 )
@@ -616,13 +604,13 @@ def handle_upload(message):
                 pass
         
         bot.edit_message_text(
-            f"✅ Uploaded: <code>{message.document.file_name}</code>\n⏳ Waiting for admin approval...",
+            f"{pf('✅ Uploaded:')} <code>{message.document.file_name}</code>\n{pf('⏳ Waiting for admin approval...')}",
             message.chat.id,
             msg.message_id,
             parse_mode='HTML'
         )
     except Exception as e:
-        bot.edit_message_text(f"❌ Error: {e}", message.chat.id, msg.message_id, parse_mode='HTML')
+        bot.edit_message_text(f"{pf('❌ Error:')} {e}", message.chat.id, msg.message_id, parse_mode='HTML')
 
 # ============================================================
 # APPROVE/REJECT CALLBACKS
@@ -630,7 +618,7 @@ def handle_upload(message):
 @bot.callback_query_handler(func=lambda c: c.data.startswith('approve_'))
 def approve_file(call):
     if not is_admin(call.from_user.id):
-        bot.answer_callback_query(call.id, "⚠️ Admin only!", show_alert=True)
+        bot.answer_callback_query(call.id, pf("⚠️ Admin only!"), show_alert=True)
         return
     parts = call.data.split('_')
     user_id = int(parts[1])
@@ -640,14 +628,14 @@ def approve_file(call):
     c.execute('UPDATE user_files SET approved = 1 WHERE user_id = ? AND file_name = ?', (user_id, file_name))
     conn.commit()
     conn.close()
-    bot.answer_callback_query(call.id, "✅ Approved!")
-    bot.edit_message_text(f"✅ Approved: <code>{file_name}</code>", call.message.chat.id, call.message.message_id, parse_mode='HTML')
-    bot.send_message(user_id, f"✅ Your file <code>{file_name}</code> has been approved!\n▶️ Use Run File button to start.", parse_mode='HTML')
+    bot.answer_callback_query(call.id, pf("✅ Approved!"))
+    bot.edit_message_text(f"{pf('✅ Approved:')} <code>{file_name}</code>", call.message.chat.id, call.message.message_id, parse_mode='HTML')
+    bot.send_message(user_id, f"{pf('✅ Your file')} <code>{file_name}</code> {pf('has been approved!')}\n{pf('▶️ Use Run File button to start.')}", parse_mode='HTML')
 
 @bot.callback_query_handler(func=lambda c: c.data.startswith('reject_'))
 def reject_file(call):
     if not is_admin(call.from_user.id):
-        bot.answer_callback_query(call.id, "⚠️ Admin only!", show_alert=True)
+        bot.answer_callback_query(call.id, pf("⚠️ Admin only!"), show_alert=True)
         return
     parts = call.data.split('_')
     user_id = int(parts[1])
@@ -660,9 +648,9 @@ def reject_file(call):
     file_path = os.path.join(UPLOAD_DIR, f"{user_id}_{file_name}")
     if os.path.exists(file_path):
         os.remove(file_path)
-    bot.answer_callback_query(call.id, "❌ Rejected!")
-    bot.edit_message_text(f"❌ Rejected: <code>{file_name}</code>", call.message.chat.id, call.message.message_id, parse_mode='HTML')
-    bot.send_message(user_id, f"❌ Your file <code>{file_name}</code> was rejected.\n📞 Contact @SunrakuV2 for details.", parse_mode='HTML')
+    bot.answer_callback_query(call.id, pf("❌ Rejected!"))
+    bot.edit_message_text(f"{pf('❌ Rejected:')} <code>{file_name}</code>", call.message.chat.id, call.message.message_id, parse_mode='HTML')
+    bot.send_message(user_id, f"{pf('❌ Your file')} <code>{file_name}</code> {pf('was rejected.')}\n{pf('📞 Contact @SunrakuV2 for details.')}", parse_mode='HTML')
 
 # ============================================================
 # RUN FILE
@@ -671,7 +659,7 @@ def reject_file(call):
 def run_file_cmd(message):
     user_id = message.chat.id
     if is_banned(user_id):
-        bot.reply_to(message, "🚫 You are banned!", parse_mode='HTML')
+        bot.reply_to(message, pf("🚫 You are banned!"), parse_mode='HTML')
         return
     
     conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
@@ -681,27 +669,27 @@ def run_file_cmd(message):
     conn.close()
     
     if not files:
-        bot.reply_to(message, "❌ No approved files!\n📤 Upload and wait for approval.", parse_mode='HTML')
+        bot.reply_to(message, pf("❌ No approved files!\n📤 Upload and wait for approval."), parse_mode='HTML')
         return
     
     if len(files) == 1:
         file_name = files[0][0]
         if can_run_free(user_id, file_name):
-            bot.reply_to(message, f"🔄 Free run!\n<code>{file_name}</code>\n⏳ 7-hour session active", parse_mode='HTML')
+            bot.reply_to(message, f"{pf('🔄 Free run!')}\n<code>{file_name}</code>\n{pf('⏳ 7-hour session active')}", parse_mode='HTML')
             run_file(message, file_name, free=True)
             return
         credits = get_credits(user_id)
         if credits <= 0:
-            bot.reply_to(message, "❌ Insufficient credits!\n💰 Use Daily Bonus or Refer & Earn", parse_mode='HTML')
+            bot.reply_to(message, pf("❌ Insufficient credits!\n💰 Use Daily Bonus or Refer & Earn"), parse_mode='HTML')
             return
-        bot.reply_to(message, f"🚀 Starting: <code>{file_name}</code> (1 credit)", parse_mode='HTML')
+        bot.reply_to(message, f"{pf('🚀 Starting:')} <code>{file_name}</code> {pf('(1 credit)')}", parse_mode='HTML')
         run_file(message, file_name, free=False)
         return
     
     markup = InlineKeyboardMarkup(row_width=1)
     for file_name in files:
         markup.add(InlineKeyboardButton(f"▶️ {file_name[0]}", callback_data=f"run_{user_id}_{file_name[0]}"))
-    bot.reply_to(message, "📂 Select file to run:", reply_markup=markup, parse_mode='HTML')
+    bot.reply_to(message, pf("📂 Select file to run:"), reply_markup=markup, parse_mode='HTML')
 
 @bot.callback_query_handler(func=lambda c: c.data.startswith('run_'))
 def run_selected_file(call):
@@ -709,18 +697,18 @@ def run_selected_file(call):
     user_id = int(parts[1])
     file_name = '_'.join(parts[2:])
     if call.from_user.id != user_id:
-        bot.answer_callback_query(call.id, "⚠️ Not your file!", show_alert=True)
+        bot.answer_callback_query(call.id, pf("⚠️ Not your file!"), show_alert=True)
         return
     bot.answer_callback_query(call.id)
     if can_run_free(user_id, file_name):
-        bot.send_message(call.message.chat.id, f"🔄 Free run!\n<code>{file_name}</code>\n⏳ 7-hour session active", parse_mode='HTML')
+        bot.send_message(call.message.chat.id, f"{pf('🔄 Free run!')}\n<code>{file_name}</code>\n{pf('⏳ 7-hour session active')}", parse_mode='HTML')
         run_file(call.message, file_name, free=True)
         return
     credits = get_credits(user_id)
     if credits <= 0:
-        bot.send_message(call.message.chat.id, "❌ Insufficient credits!\n💰 Use Daily Bonus or Refer & Earn", parse_mode='HTML')
+        bot.send_message(call.message.chat.id, pf("❌ Insufficient credits!\n💰 Use Daily Bonus or Refer & Earn"), parse_mode='HTML')
         return
-    bot.send_message(call.message.chat.id, f"🚀 Starting: <code>{file_name}</code> (1 credit)", parse_mode='HTML')
+    bot.send_message(call.message.chat.id, f"{pf('🚀 Starting:')} <code>{file_name}</code> {pf('(1 credit)')}", parse_mode='HTML')
     run_file(call.message, file_name, free=False)
 
 def run_file(message, file_name, free=False):
@@ -731,12 +719,12 @@ def run_file(message, file_name, free=False):
         session = user_sessions[user_id]
     
     if session.is_running:
-        bot.reply_to(message, "⚠️ File already running!\nUse Stop File first.", parse_mode='HTML')
+        bot.reply_to(message, pf("⚠️ File already running!\nUse Stop File first."), parse_mode='HTML')
         return
     
     file_path = os.path.join(UPLOAD_DIR, f"{user_id}_{file_name}")
     if not os.path.exists(file_path):
-        bot.reply_to(message, f"❌ File not found: <code>{file_name}</code>", parse_mode='HTML')
+        bot.reply_to(message, f"{pf('❌ File not found:')} <code>{file_name}</code>", parse_mode='HTML')
         return
     
     if not free:
@@ -744,7 +732,7 @@ def run_file(message, file_name, free=False):
     else:
         new_credits = get_credits(user_id)
     
-    msg = bot.reply_to(message, "🚀 Starting...", parse_mode='HTML')
+    msg = bot.reply_to(message, pf("🚀 Starting..."), parse_mode='HTML')
     
     try:
         session.process = subprocess.Popen(
@@ -757,8 +745,10 @@ def run_file(message, file_name, free=False):
         )
         session.is_running = True
         session.start_time = datetime.now()
+        session.end_time = None
         session.file_path = file_path
         session.total_checks = 0
+        session.speed = 0
         session.is_approved = True
         session.current_file = file_name
         session.add_log(f"✅ Started: {file_name}")
@@ -767,9 +757,11 @@ def run_file(message, file_name, free=False):
             start_run_session(user_id, file_name)
         
         def read_logs():
+            """Read logs from process - LIKE ORIGINAL FILE"""
             stdout = session.process.stdout
-            partial = ""
+            partial_output = ""
             prompt_sent = False
+            
             while True:
                 try:
                     if stdout is None:
@@ -780,48 +772,64 @@ def run_file(message, file_name, free=False):
                         if not chunk:
                             break
                         text = chunk.decode("utf-8", errors="replace")
-                        partial += text
+                        partial_output += text
                         prompt_sent = False
-                        while "\n" in partial:
-                            line, partial = partial.split("\n", 1)
+                        
+                        # Store complete lines as logs
+                        while "\n" in partial_output:
+                            line, partial_output = partial_output.split("\n", 1)
                             line = line.rstrip("\r")
                             if line.strip():
                                 session.add_log(line.strip())
                                 session.total_checks += 1
                     else:
-                        prompt = clean_prompt(partial)
-                        if prompt and not prompt_sent and session.process.poll() is None and looks_like_input(prompt):
+                        # Check for input prompt
+                        prompt = clean_prompt(partial_output)
+                        if (
+                            prompt
+                            and not prompt_sent
+                            and session.process.poll() is None
+                            and looks_like_input(prompt)
+                        ):
                             ask_user_for_input(session, prompt)
-                            partial = ""
+                            partial_output = ""
                             prompt_sent = True
+                    
                     if session.process.poll() is not None:
                         break
                 except Exception as e:
                     session.add_log(f"⚠️ Reader error: {e}")
                     break
-            remaining = clean_prompt(partial)
+            
+            remaining = clean_prompt(partial_output)
             if remaining and not session.awaiting_input:
                 session.add_log(remaining)
-            session.is_running = False
+            
+            return_code = session.process.poll()
             session.awaiting_input = False
-            if session.process.poll() == 0:
+            session.input_prompt = ""
+            session.is_running = False
+            session.end_time = datetime.now()
+            
+            if return_code == 0:
                 session.add_log("✅ File finished")
-            else:
-                session.add_log(f"⚠️ Exited with code {session.process.poll()}")
+            elif return_code is not None:
+                session.add_log(f"⚠️ File exited with code {return_code}")
+            
             end_run_session(user_id, file_name)
         
         threading.Thread(target=read_logs, daemon=True).start()
         time.sleep(0.5)
         bot.edit_message_text(
-            f"✅ Running: <code>{file_name}</code>\n💰 Credits left: {new_credits}\n📜 Use View Logs to see output",
+            f"{pf('✅ Running:')} <code>{file_name}</code>\n{pf('💰 Credits left:')} {new_credits}\n{pf('📜 Use View Logs to see output')}",
             message.chat.id,
             msg.message_id,
             parse_mode='HTML'
         )
     except Exception as e:
         session.is_running = False
-        session.add_log(f"❌ Run error: {e}")
-        bot.edit_message_text(f"❌ Error: {e}", message.chat.id, msg.message_id, parse_mode='HTML')
+        session.add_log(f"❌ Run error: {str(e)}")
+        bot.edit_message_text(f"{pf('❌ Error:')} {e}", message.chat.id, msg.message_id, parse_mode='HTML')
 
 # ============================================================
 # STOP FILE
@@ -831,11 +839,11 @@ def stop_file_cmd(message):
     user_id = message.chat.id
     with lock:
         if user_id not in user_sessions:
-            bot.reply_to(message, "❌ No session!", parse_mode='HTML')
+            bot.reply_to(message, pf("❌ No session!"), parse_mode='HTML')
             return
         session = user_sessions[user_id]
     if not session.is_running:
-        bot.reply_to(message, "⚠️ No file running!", parse_mode='HTML')
+        bot.reply_to(message, pf("⚠️ No file running!"), parse_mode='HTML')
         return
     try:
         session.is_running = False
@@ -843,59 +851,63 @@ def stop_file_cmd(message):
         time.sleep(1)
         if session.process.poll() is None:
             session.process.kill()
-        session.add_log("⏹ Stopped by user")
+        session.end_time = datetime.now()
+        session.add_log("⏹ File stopped")
         if session.current_file:
             end_run_session(user_id, session.current_file)
-        bot.reply_to(message, "⏹ File stopped!", parse_mode='HTML')
+        bot.reply_to(message, pf("⏹ File stopped!"), parse_mode='HTML')
     except Exception as e:
-        bot.reply_to(message, f"❌ Error: {e}", parse_mode='HTML')
+        bot.reply_to(message, f"{pf('❌ Error:')} {e}", parse_mode='HTML')
 
 # ============================================================
-# VIEW LOGS (FIXED - DIRECT RESPONSE, NO STUCK)
+# VIEW LOGS - FIXED (Using session.get_logs like original file)
 # ============================================================
 @bot.message_handler(func=lambda m: m.text == BTN_LOGS)
 def view_logs_cmd(message):
-    user_id = message.chat.id
+    chat_id = message.chat.id
     with lock:
-        if user_id not in user_sessions:
-            bot.reply_to(message, "❌ No session!", parse_mode='HTML')
+        if chat_id not in user_sessions:
+            bot.reply_to(message, pf("❌ No session found!"), parse_mode='HTML')
             return
-        session = user_sessions[user_id]
+        session = user_sessions[chat_id]
     
+    # Get logs using the same method as original file
     logs = session.get_logs(30)
+    
     if not logs or logs == "📭 No logs yet.":
-        bot.reply_to(message, "📭 No logs yet.\n▶️ Run a file first.", parse_mode='HTML')
+        bot.reply_to(message, pf("📭 No logs yet.\n\n▶️ Run a file to see output."), parse_mode='HTML')
         return
     
+    # Send logs (split if too long)
     if len(logs) > 4000:
         chunks = [logs[i:i+4000] for i in range(0, len(logs), 4000)]
-        bot.reply_to(message, f"📜 Logs (Part 1/{len(chunks)})\n```\n{chunks[0]}\n```", parse_mode='HTML')
-        for i, chunk in enumerate(chunks[1:3], 2):
-            bot.send_message(message.chat.id, f"📜 Logs (Part {i}/{len(chunks)})\n```\n{chunk}\n```", parse_mode='HTML')
+        bot.reply_to(message, f"{pf('📜 Recent Logs (Part 1/{}')}{len(chunks)}{pf(')')}:\n```\n{chunks[0]}\n```", parse_mode='HTML')
+        for i, chunk in enumerate(chunks[1:4], 2):
+            bot.send_message(chat_id, f"{pf('📜 Logs (Part {}/{}')}{i}{len(chunks)}{pf(')')}:\n```\n{chunk}\n```", parse_mode='HTML')
     else:
-        bot.reply_to(message, f"📜 Recent Logs:\n```\n{logs}\n```", parse_mode='HTML')
+        bot.reply_to(message, f"{pf('📜 Recent Logs:')}\n```\n{logs}\n```", parse_mode='HTML')
 
 # ============================================================
-# SEND INPUT (Manual)
+# SEND INPUT
 # ============================================================
 @bot.message_handler(func=lambda m: m.text == BTN_INPUT)
 def send_input_cmd(message):
     user_id = message.chat.id
     with lock:
         if user_id not in user_sessions:
-            bot.reply_to(message, "❌ No session!", parse_mode='HTML')
+            bot.reply_to(message, pf("❌ No session!"), parse_mode='HTML')
             return
         session = user_sessions[user_id]
     
     if not session.is_running:
-        bot.reply_to(message, "⚠️ No file running!\nRun a file first.", parse_mode='HTML')
+        bot.reply_to(message, pf("⚠️ No file running!\nRun a file first."), parse_mode='HTML')
         return
     
     if session.awaiting_input:
-        bot.reply_to(message, "⏳ File is already waiting for input.\nJust reply with the value!", parse_mode='HTML')
+        bot.reply_to(message, pf("⏳ File is already waiting for input.\nJust reply with the value!"), parse_mode='HTML')
         return
     
-    msg = bot.reply_to(message, "💬 Send input for your running file:", parse_mode='HTML')
+    msg = bot.reply_to(message, pf("💬 Send input for your running file:"), parse_mode='HTML')
     session.awaiting_input = True
     bot.register_next_step_handler(msg, process_manual_input, user_id)
 
@@ -906,18 +918,18 @@ def process_manual_input(message, user_id):
         session = user_sessions[user_id]
     
     if not session.awaiting_input:
-        bot.reply_to(message, "⚠️ No input needed.", parse_mode='HTML')
+        bot.reply_to(message, pf("⚠️ No input needed."), parse_mode='HTML')
         return
     
     if not session.process or not session.is_running:
         session.awaiting_input = False
-        bot.reply_to(message, "⚠️ File stopped.", parse_mode='HTML')
+        bot.reply_to(message, pf("⚠️ File stopped."), parse_mode='HTML')
         return
     
     value = message.text or ""
     if value.strip().lower() == "/cancel":
         session.awaiting_input = False
-        bot.reply_to(message, "❎ Cancelled.", parse_mode='HTML')
+        bot.reply_to(message, pf("❎ Cancelled."), parse_mode='HTML')
         return
     
     try:
@@ -926,15 +938,15 @@ def process_manual_input(message, user_id):
             session.process.stdin.flush()
             session.awaiting_input = False
             session.add_log(f"✅ Manual input: {value[:40]}")
-            bot.reply_to(message, f"✅ Input sent!\n`{value[:100]}`", parse_mode='HTML')
+            bot.reply_to(message, f"{pf('✅ Input sent!')}\n`{value[:100]}`", parse_mode='HTML')
             time.sleep(0.3)
             logs = session.get_logs(10)
             if logs and logs != "📭 No logs yet.":
-                bot.send_message(message.chat.id, f"📜 Updated Logs:\n```\n{logs}\n```", parse_mode='HTML')
+                bot.send_message(message.chat.id, f"{pf('📜 Updated Logs:')}\n```\n{logs}\n```", parse_mode='HTML')
     except Exception as e:
         session.awaiting_input = False
         session.add_log(f"❌ Input error: {e}")
-        bot.reply_to(message, f"❌ Error: {e}", parse_mode='HTML')
+        bot.reply_to(message, f"{pf('❌ Error:')} {e}", parse_mode='HTML')
 
 # ============================================================
 # PIP INSTALL
@@ -943,10 +955,10 @@ def process_manual_input(message, user_id):
 def pip_install_cmd(message):
     user_id = message.chat.id
     if is_banned(user_id):
-        bot.reply_to(message, "🚫 You are banned!", parse_mode='HTML')
+        bot.reply_to(message, pf("🚫 You are banned!"), parse_mode='HTML')
         return
     
-    msg = bot.reply_to(message, "📦 Enter package name to install:\nExample: `requests`", parse_mode='HTML')
+    msg = bot.reply_to(message, pf("📦 Enter package name to install:\nExample: `requests`"), parse_mode='HTML')
     bot.register_next_step_handler(msg, process_pip_install)
 
 def process_pip_install(message):
@@ -954,14 +966,14 @@ def process_pip_install(message):
     package = message.text.strip()
     
     if not package:
-        bot.reply_to(message, "❌ No package name!", parse_mode='HTML')
+        bot.reply_to(message, pf("❌ No package name!"), parse_mode='HTML')
         return
     
     if package.lower() == "/cancel":
-        bot.reply_to(message, "❎ Cancelled.", parse_mode='HTML')
+        bot.reply_to(message, pf("❎ Cancelled."), parse_mode='HTML')
         return
     
-    msg = bot.reply_to(message, f"📦 Installing <code>{package}</code>...", parse_mode='HTML')
+    msg = bot.reply_to(message, f"{pf('📦 Installing')} <code>{package}</code>...", parse_mode='HTML')
     
     try:
         result = subprocess.run(
@@ -973,7 +985,7 @@ def process_pip_install(message):
         
         if result.returncode == 0:
             bot.edit_message_text(
-                f"✅ <code>{package}</code> installed successfully!",
+                f"{pf('✅')} <code>{package}</code> {pf('installed successfully!')}",
                 message.chat.id,
                 msg.message_id,
                 parse_mode='HTML'
@@ -981,15 +993,15 @@ def process_pip_install(message):
         else:
             error = result.stderr or result.stdout
             bot.edit_message_text(
-                f"❌ Failed to install <code>{package}</code>:\n```\n{error[:300]}\n```",
+                f"{pf('❌ Failed to install')} <code>{package}</code>:\n```\n{error[:300]}\n```",
                 message.chat.id,
                 msg.message_id,
                 parse_mode='HTML'
             )
     except subprocess.TimeoutExpired:
-        bot.edit_message_text(f"⏱️ Installation timed out for <code>{package}</code>", message.chat.id, msg.message_id, parse_mode='HTML')
+        bot.edit_message_text(f"{pf('⏱️ Installation timed out for')} <code>{package}</code>", message.chat.id, msg.message_id, parse_mode='HTML')
     except Exception as e:
-        bot.edit_message_text(f"❌ Error: {e}", message.chat.id, msg.message_id, parse_mode='HTML')
+        bot.edit_message_text(f"{pf('❌ Error:')} {e}", message.chat.id, msg.message_id, parse_mode='HTML')
 
 # ============================================================
 # CREDITS
@@ -1001,17 +1013,17 @@ def credits_cmd(message):
     referral_count = get_referral_count(user_id)
     
     text = f"""
-💰 {ms('Your Credits')}
-━━━━━━━━━━━━━━━━━━━━━
-👤 {ms('User:')} {message.from_user.first_name}
-💳 {ms('Credits:')} {credits}
-🤝 {ms('Referrals:')} {referral_count}
-━━━━━━━━━━━━━━━━━━━━━
-{ms('📌 How to get more:')}
-• 🎁 {ms('Daily Bonus: 2 credits/24h')}
-• 🤝 {ms('Refer & Earn: +2 credits/referral')}
-• 👑 {ms('Contact admin for extra credits')}
-━━━━━━━━━━━━━━━━━━━━━
+{pf('💰 Your Credits')}
+◈◆◈◆◈◆◈◆◈◆◈◆◈◆◈
+{pf('👤 User:')} {message.from_user.first_name}
+{pf('💳 Credits:')} {credits}
+{pf('🤝 Referrals:')} {referral_count}
+◈◆◈◆◈◆◈◆◈◆◈◆◈◆◈
+{pf('✦ How to get more:')}
+{pf('  ▪ Daily Bonus: +2 credits (24h)')}
+{pf('  ▪ Refer & Earn: +2 credits/ref')}
+{pf('  ▪ Contact admin for extra')}
+◈◆◈◆◈◆◈◆◈◆◈◆◈◆◈
 """
     bot.reply_to(message, text, parse_mode='HTML')
 
@@ -1022,7 +1034,7 @@ def credits_cmd(message):
 def daily_bonus_cmd(message):
     user_id = message.chat.id
     if is_banned(user_id):
-        bot.reply_to(message, "🚫 You are banned!", parse_mode='HTML')
+        bot.reply_to(message, pf("🚫 You are banned!"), parse_mode='HTML')
         return
     
     if can_claim_daily_bonus(user_id):
@@ -1030,13 +1042,13 @@ def daily_bonus_cmd(message):
         if claimed:
             bot.reply_to(
                 message,
-                f"🎁 {ms('Daily Bonus Claimed!')}\n✅ {ms('+2 credits added!')}\n💰 {ms('Total credits:')} {new_credits}\n⏳ {ms('Next bonus: 24 hours')}",
+                f"{pf('🎁 Daily Bonus Claimed!')}\n{pf('✅ +2 credits added!')}\n{pf('💰 Total credits:')} {new_credits}\n{pf('⏳ Next bonus: 24 hours')}",
                 parse_mode='HTML'
             )
         else:
-            bot.reply_to(message, "❌ Failed to claim bonus.", parse_mode='HTML')
+            bot.reply_to(message, pf("❌ Failed to claim bonus."), parse_mode='HTML')
     else:
-        bot.reply_to(message, "⏳ Daily Bonus already claimed!\n🕐 Next claim in: 24 hours", parse_mode='HTML')
+        bot.reply_to(message, pf("⏳ Daily Bonus already claimed!\n🕐 Next claim in: 24 hours"), parse_mode='HTML')
 
 # ============================================================
 # REFER & EARN
@@ -1045,7 +1057,7 @@ def daily_bonus_cmd(message):
 def refer_cmd(message):
     user_id = message.chat.id
     if is_banned(user_id):
-        bot.reply_to(message, "🚫 You are banned!", parse_mode='HTML')
+        bot.reply_to(message, pf("🚫 You are banned!"), parse_mode='HTML')
         return
     
     ref_code = get_referral_code(user_id)
@@ -1055,36 +1067,36 @@ def refer_cmd(message):
     pending_count = get_pending_referrals(user_id)
     
     text = f"""
-🤝 {ms('Refer & Earn Credits!')}
-━━━━━━━━━━━━━━━━━━━━━
-📊 {ms('Your Referrals:')} {referral_count}
-⏳ {ms('Pending:')} {pending_count}
-💰 {ms('Per Referral: +2 credits')}
-━━━━━━━━━━━━━━━━━━━━━
-🔗 {ms('Your Referral Link:')}
+{pf('🤝 Refer & Earn Credits!')}
+◈◆◈◆◈◆◈◆◈◆◈◆◈◆◈
+{pf('📊 Your Referrals:')} {referral_count}
+{pf('⏳ Pending:')} {pending_count}
+{pf('💰 Per Referral: +2 credits')}
+◈◆◈◆◈◆◈◆◈◆◈◆◈◆◈
+{pf('🔗 Your Referral Link:')}
 <code>{ref_link}</code>
-━━━━━━━━━━━━━━━━━━━━━
-📌 {ms('How it works:')}
-1️⃣ {ms('Share your link with friends')}
-2️⃣ {ms('They join using your link')}
-3️⃣ {ms('You get +2 credits instantly!')}
-━━━━━━━━━━━━━━━━━━━━━
+◈◆◈◆◈◆◈◆◈◆◈◆◈◆◈
+{pf('✦ How it works:')}
+{pf('  1. Share your link with friends')}
+{pf('  2. They join using your link')}
+{pf('  3. You get +2 credits instantly!')}
+◈◆◈◆◈◆◈◆◈◆◈◆◈◆◈
 """
     markup = InlineKeyboardMarkup()
-    markup.add(InlineKeyboardButton("📋 Copy Link", callback_data=f"copy_{user_id}"))
+    markup.add(InlineKeyboardButton(pf("📋 Copy Link"), callback_data=f"copy_{user_id}"))
     bot.reply_to(message, text, reply_markup=markup, parse_mode='HTML')
 
 @bot.callback_query_handler(func=lambda c: c.data.startswith('copy_'))
 def copy_link(call):
     user_id = int(call.data.split('_')[1])
     if call.from_user.id != user_id:
-        bot.answer_callback_query(call.id, "⚠️ Not your link!", show_alert=True)
+        bot.answer_callback_query(call.id, pf("⚠️ Not your link!"), show_alert=True)
         return
     ref_code = get_referral_code(user_id)
     bot_username = bot.get_me().username
     ref_link = f"https://t.me/{bot_username}?start={ref_code}"
-    bot.answer_callback_query(call.id, "📋 Link copied!", show_alert=True)
-    bot.send_message(call.message.chat.id, f"🔗 Your Referral Link:\n<code>{ref_link}</code>", parse_mode='HTML')
+    bot.answer_callback_query(call.id, pf("📋 Link copied!"), show_alert=True)
+    bot.send_message(call.message.chat.id, f"{pf('🔗 Your Referral Link:')}\n<code>{ref_link}</code>", parse_mode='HTML')
 
 # ============================================================
 # PROFILE
@@ -1093,7 +1105,7 @@ def copy_link(call):
 def profile_cmd(message):
     user_id = message.chat.id
     if is_banned(user_id):
-        bot.reply_to(message, "🚫 You are banned!", parse_mode='HTML')
+        bot.reply_to(message, pf("🚫 You are banned!"), parse_mode='HTML')
         return
     
     credits = get_credits(user_id)
@@ -1107,17 +1119,17 @@ def profile_cmd(message):
     approved_files = c.fetchone()[0]
     conn.close()
     
-    admin_status = "👑 Admin" if is_admin(user_id) else "👤 User"
+    admin_status = pf("👑 Admin") if is_admin(user_id) else pf("👤 User")
     
     text = f"""
-👤 {ms('Your Profile')}
-━━━━━━━━━━━━━━━━━━━━━
-🆔 {ms('ID:')} <code>{user_id}</code>
-🎫 {ms('Role:')} {admin_status}
-💰 {ms('Credits:')} {credits}
-📁 {ms('Files:')} {total_files} (✅ {approved_files} {ms('approved')})
-🤝 {ms('Referrals:')} {referral_count}
-━━━━━━━━━━━━━━━━━━━━━
+{pf('👤 Your Profile')}
+◈◆◈◆◈◆◈◆◈◆◈◆◈◆◈
+{pf('🆔 ID:')} <code>{user_id}</code>
+{pf('🎫 Role:')} {admin_status}
+{pf('💰 Credits:')} {credits}
+{pf('📁 Files:')} {total_files} ({pf('✅')} {approved_files} {pf('approved')})
+{pf('🤝 Referrals:')} {referral_count}
+◈◆◈◆◈◆◈◆◈◆◈◆◈◆◈
 """
     bot.reply_to(message, text, parse_mode='HTML')
 
@@ -1128,7 +1140,7 @@ def profile_cmd(message):
 def my_files_cmd(message):
     user_id = message.chat.id
     if is_banned(user_id):
-        bot.reply_to(message, "🚫 You are banned!", parse_mode='HTML')
+        bot.reply_to(message, pf("🚫 You are banned!"), parse_mode='HTML')
         return
     
     conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
@@ -1138,12 +1150,12 @@ def my_files_cmd(message):
     conn.close()
     
     if not files:
-        bot.reply_to(message, "📭 No files uploaded.\n\nUse Upload File button.", parse_mode='HTML')
+        bot.reply_to(message, pf("📭 No files uploaded.\n\nUse Upload File button."), parse_mode='HTML')
         return
     
-    text = "📂 Your Files:\n━━━━━━━━━━━━━━━━━━━━━\n"
+    text = f"{pf('📂 Your Files:')}\n◈◆◈◆◈◆◈◆◈◆◈◆◈◆◈\n"
     for file_name, approved in files:
-        status = "✅ Approved" if approved else "⏳ Pending"
+        status = pf("✅ Approved") if approved else pf("⏳ Pending")
         text += f"📄 {file_name} — {status}\n"
     bot.reply_to(message, text, parse_mode='HTML')
 
@@ -1154,13 +1166,13 @@ def my_files_cmd(message):
 def contact_cmd(message):
     markup = InlineKeyboardMarkup()
     markup.add(
-        InlineKeyboardButton("👑 @SunrakuV2", url="https://t.me/SunrakuV2"),
-        InlineKeyboardButton("📢 @Anishpy", url="https://t.me/Anishpy"),
-        InlineKeyboardButton("📢 @VOUCH_R", url="https://t.me/VOUCH_R")
+        InlineKeyboardButton(pf("♛ @SunrakuV2"), url="https://t.me/SunrakuV2"),
+        InlineKeyboardButton(pf("✦ @Anishpy"), url="https://t.me/Anishpy"),
+        InlineKeyboardButton(pf("✦ @VOUCH_R"), url="https://t.me/VOUCH_R")
     )
     bot.reply_to(
         message,
-        "📞 Contact & Support\n━━━━━━━━━━━━━━━━━━━━━\nClick below to connect:",
+        f"{pf('📞 Contact & Support')}\n◈◆◈◆◈◆◈◆◈◆◈◆◈◆◈\n{pf('Click below to connect:')}",
         reply_markup=markup,
         parse_mode='HTML'
     )
@@ -1172,30 +1184,30 @@ def contact_cmd(message):
 def admin_panel_cmd(message):
     user_id = message.chat.id
     if not is_admin(user_id):
-        bot.reply_to(message, "⚠️ Admin only!", parse_mode='HTML')
+        bot.reply_to(message, pf("⚠️ Admin only!"), parse_mode='HTML')
         return
     
     markup = InlineKeyboardMarkup(row_width=2)
     markup.add(
-        InlineKeyboardButton("💰 Add Credits", callback_data="admin_add_credits"),
-        InlineKeyboardButton("👑 Add Admin", callback_data="admin_add_admin")
+        InlineKeyboardButton(pf("💰 Add Credits"), callback_data="admin_add_credits"),
+        InlineKeyboardButton(pf("👑 Add Admin"), callback_data="admin_add_admin")
     )
     markup.add(
-        InlineKeyboardButton("📢 Broadcast", callback_data="admin_broadcast"),
-        InlineKeyboardButton("📊 Stats", callback_data="admin_stats")
+        InlineKeyboardButton(pf("📢 Broadcast"), callback_data="admin_broadcast"),
+        InlineKeyboardButton(pf("📊 Stats"), callback_data="admin_stats")
     )
     markup.add(
-        InlineKeyboardButton("🚫 Ban User", callback_data="admin_ban"),
-        InlineKeyboardButton("✅ Unban User", callback_data="admin_unban")
+        InlineKeyboardButton(pf("🚫 Ban User"), callback_data="admin_ban"),
+        InlineKeyboardButton(pf("✅ Unban User"), callback_data="admin_unban")
     )
     markup.add(
-        InlineKeyboardButton("📋 Banned List", callback_data="admin_banned_list"),
-        InlineKeyboardButton("📁 All Files", callback_data="admin_all_files")
+        InlineKeyboardButton(pf("📋 Banned List"), callback_data="admin_banned_list"),
+        InlineKeyboardButton(pf("📁 All Files"), callback_data="admin_all_files")
     )
     markup.add(
-        InlineKeyboardButton("👥 Users List", callback_data="admin_users_list")
+        InlineKeyboardButton(pf("👥 Users List"), callback_data="admin_users_list")
     )
-    bot.reply_to(message, "👑 Admin Panel", reply_markup=markup, parse_mode='HTML')
+    bot.reply_to(message, pf("👑 Admin Panel"), reply_markup=markup, parse_mode='HTML')
 
 # ============================================================
 # ADMIN CALLBACKS
@@ -1203,10 +1215,10 @@ def admin_panel_cmd(message):
 @bot.callback_query_handler(func=lambda c: c.data == "admin_add_credits")
 def admin_add_credits(call):
     if not is_admin(call.from_user.id):
-        bot.answer_callback_query(call.id, "⚠️ Admin only!", show_alert=True)
+        bot.answer_callback_query(call.id, pf("⚠️ Admin only!"), show_alert=True)
         return
     bot.answer_callback_query(call.id)
-    msg = bot.send_message(call.message.chat.id, "💰 Enter: user_id amount\nExample: `123456 10`", parse_mode='HTML')
+    msg = bot.send_message(call.message.chat.id, f"{pf('💰 Enter: user_id amount')}\n{pf('Example:')} `123456 10`", parse_mode='HTML')
     bot.register_next_step_handler(msg, process_add_credits)
 
 def process_add_credits(message):
@@ -1217,18 +1229,18 @@ def process_add_credits(message):
         user_id = int(parts[0])
         amount = int(parts[1])
         add_credits(user_id, amount)
-        bot.reply_to(message, f"✅ Added {amount} credits to <code>{user_id}</code>", parse_mode='HTML')
-        bot.send_message(user_id, f"💰 +{amount} credits added!\nCurrent balance: {get_credits(user_id)}", parse_mode='HTML')
+        bot.reply_to(message, f"{pf('✅ Added')} {amount} {pf('credits to')} <code>{user_id}</code>", parse_mode='HTML')
+        bot.send_message(user_id, f"{pf('💰 +{} credits added!').format(amount)}\n{pf('Current balance:')} {get_credits(user_id)}", parse_mode='HTML')
     except:
-        bot.reply_to(message, "❌ Invalid format! Use: user_id amount", parse_mode='HTML')
+        bot.reply_to(message, f"{pf('❌ Invalid format! Use: user_id amount')}", parse_mode='HTML')
 
 @bot.callback_query_handler(func=lambda c: c.data == "admin_add_admin")
 def admin_add_admin(call):
     if not is_admin(call.from_user.id):
-        bot.answer_callback_query(call.id, "⚠️ Admin only!", show_alert=True)
+        bot.answer_callback_query(call.id, pf("⚠️ Admin only!"), show_alert=True)
         return
     bot.answer_callback_query(call.id)
-    msg = bot.send_message(call.message.chat.id, "👑 Enter user ID to add as admin:", parse_mode='HTML')
+    msg = bot.send_message(call.message.chat.id, pf("👑 Enter user ID to add as admin:"), parse_mode='HTML')
     bot.register_next_step_handler(msg, process_add_admin)
 
 def process_add_admin(message):
@@ -1237,7 +1249,7 @@ def process_add_admin(message):
     try:
         user_id = int(message.text.strip())
         if user_id in admin_ids:
-            bot.reply_to(message, f"⚠️ <code>{user_id}</code> is already admin!", parse_mode='HTML')
+            bot.reply_to(message, f"{pf('⚠️')} <code>{user_id}</code> {pf('is already admin!')}", parse_mode='HTML')
             return
         conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
         c = conn.cursor()
@@ -1245,36 +1257,36 @@ def process_add_admin(message):
         conn.commit()
         conn.close()
         load_admins()
-        bot.reply_to(message, f"✅ <code>{user_id}</code> added as admin!", parse_mode='HTML')
-        bot.send_message(user_id, "👑 You have been added as admin!", parse_mode='HTML')
+        bot.reply_to(message, f"{pf('✅')} <code>{user_id}</code> {pf('added as admin!')}", parse_mode='HTML')
+        bot.send_message(user_id, pf("👑 You have been added as admin!"), parse_mode='HTML')
     except:
-        bot.reply_to(message, "❌ Invalid user ID!", parse_mode='HTML')
+        bot.reply_to(message, pf("❌ Invalid user ID!"), parse_mode='HTML')
 
 @bot.callback_query_handler(func=lambda c: c.data == "admin_broadcast")
 def admin_broadcast(call):
     if not is_admin(call.from_user.id):
-        bot.answer_callback_query(call.id, "⚠️ Admin only!", show_alert=True)
+        bot.answer_callback_query(call.id, pf("⚠️ Admin only!"), show_alert=True)
         return
     bot.answer_callback_query(call.id)
-    msg = bot.send_message(call.message.chat.id, "📢 Send broadcast message:", parse_mode='HTML')
+    msg = bot.send_message(call.message.chat.id, pf("📢 Send broadcast message:"), parse_mode='HTML')
     bot.register_next_step_handler(msg, process_broadcast)
 
 def process_broadcast(message):
     if not is_admin(message.from_user.id):
         return
-    msg = bot.reply_to(message, "📢 Broadcasting...")
+    msg = bot.reply_to(message, pf("📢 Broadcasting..."))
     users = get_all_users()
     sent = 0
     failed = 0
     for user_id in users:
         try:
-            bot.send_message(user_id, f"📢 {ms('Broadcast:')}\n\n{message.text}", parse_mode='HTML')
+            bot.send_message(user_id, f"{pf('📢 Broadcast:')}\n\n{message.text}", parse_mode='HTML')
             sent += 1
         except:
             failed += 1
         time.sleep(0.05)
     bot.edit_message_text(
-        f"✅ {ms('Broadcast done!')}\n📤 {ms('Sent:')} {sent}\n❌ {ms('Failed:')} {failed}",
+        f"{pf('✅ Broadcast done!')}\n{pf('📤 Sent:')} {sent}\n{pf('❌ Failed:')} {failed}",
         message.chat.id,
         msg.message_id,
         parse_mode='HTML'
@@ -1283,7 +1295,7 @@ def process_broadcast(message):
 @bot.callback_query_handler(func=lambda c: c.data == "admin_stats")
 def admin_stats(call):
     if not is_admin(call.from_user.id):
-        bot.answer_callback_query(call.id, "⚠️ Admin only!", show_alert=True)
+        bot.answer_callback_query(call.id, pf("⚠️ Admin only!"), show_alert=True)
         return
     bot.answer_callback_query(call.id)
     
@@ -1302,24 +1314,24 @@ def admin_stats(call):
     conn.close()
     
     text = f"""
-📊 {ms('System Stats')}
-━━━━━━━━━━━━━━━━━━━━━
-👥 {ms('Total Users:')} {total_users}
-📁 {ms('Total Files:')} {total_files}
-✅ {ms('Approved:')} {approved_files}
-👑 {ms('Admins:')} {total_admins}
-💰 {ms('Total Credits:')} {total_credits}
-━━━━━━━━━━━━━━━━━━━━━
+{pf('📊 System Stats')}
+◈◆◈◆◈◆◈◆◈◆◈◆◈◆◈
+{pf('👥 Total Users:')} {total_users}
+{pf('📁 Total Files:')} {total_files}
+{pf('✅ Approved:')} {approved_files}
+{pf('👑 Admins:')} {total_admins}
+{pf('💰 Total Credits:')} {total_credits}
+◈◆◈◆◈◆◈◆◈◆◈◆◈◆◈
 """
     bot.send_message(call.message.chat.id, text, parse_mode='HTML')
 
 @bot.callback_query_handler(func=lambda c: c.data == "admin_ban")
 def admin_ban(call):
     if not is_admin(call.from_user.id):
-        bot.answer_callback_query(call.id, "⚠️ Admin only!", show_alert=True)
+        bot.answer_callback_query(call.id, pf("⚠️ Admin only!"), show_alert=True)
         return
     bot.answer_callback_query(call.id)
-    msg = bot.send_message(call.message.chat.id, "🚫 Enter user ID to ban:", parse_mode='HTML')
+    msg = bot.send_message(call.message.chat.id, pf("🚫 Enter user ID to ban:"), parse_mode='HTML')
     bot.register_next_step_handler(msg, process_ban)
 
 def process_ban(message):
@@ -1328,27 +1340,27 @@ def process_ban(message):
     try:
         user_id = int(message.text.strip())
         if user_id == OWNER_ID:
-            bot.reply_to(message, "❌ Cannot ban owner!", parse_mode='HTML')
+            bot.reply_to(message, pf("❌ Cannot ban owner!"), parse_mode='HTML')
             return
         if is_banned(user_id):
-            bot.reply_to(message, f"⚠️ <code>{user_id}</code> is already banned!", parse_mode='HTML')
+            bot.reply_to(message, f"{pf('⚠️')} <code>{user_id}</code> {pf('is already banned!')}", parse_mode='HTML')
             return
         ban_user(user_id)
-        bot.reply_to(message, f"🚫 User <code>{user_id}</code> banned!", parse_mode='HTML')
+        bot.reply_to(message, f"{pf('🚫 User')} <code>{user_id}</code> {pf('banned!')}", parse_mode='HTML')
         try:
-            bot.send_message(user_id, "🚫 You have been banned!", parse_mode='HTML')
+            bot.send_message(user_id, pf("🚫 You have been banned!"), parse_mode='HTML')
         except:
             pass
     except:
-        bot.reply_to(message, "❌ Invalid user ID!", parse_mode='HTML')
+        bot.reply_to(message, pf("❌ Invalid user ID!"), parse_mode='HTML')
 
 @bot.callback_query_handler(func=lambda c: c.data == "admin_unban")
 def admin_unban(call):
     if not is_admin(call.from_user.id):
-        bot.answer_callback_query(call.id, "⚠️ Admin only!", show_alert=True)
+        bot.answer_callback_query(call.id, pf("⚠️ Admin only!"), show_alert=True)
         return
     bot.answer_callback_query(call.id)
-    msg = bot.send_message(call.message.chat.id, "✅ Enter user ID to unban:", parse_mode='HTML')
+    msg = bot.send_message(call.message.chat.id, pf("✅ Enter user ID to unban:"), parse_mode='HTML')
     bot.register_next_step_handler(msg, process_unban)
 
 def process_unban(message):
@@ -1357,21 +1369,21 @@ def process_unban(message):
     try:
         user_id = int(message.text.strip())
         if not is_banned(user_id):
-            bot.reply_to(message, f"⚠️ <code>{user_id}</code> is not banned!", parse_mode='HTML')
+            bot.reply_to(message, f"{pf('⚠️')} <code>{user_id}</code> {pf('is not banned!')}", parse_mode='HTML')
             return
         unban_user(user_id)
-        bot.reply_to(message, f"✅ User <code>{user_id}</code> unbanned!", parse_mode='HTML')
+        bot.reply_to(message, f"{pf('✅ User')} <code>{user_id}</code> {pf('unbanned!')}", parse_mode='HTML')
         try:
-            bot.send_message(user_id, "✅ You have been unbanned!", parse_mode='HTML')
+            bot.send_message(user_id, pf("✅ You have been unbanned!"), parse_mode='HTML')
         except:
             pass
     except:
-        bot.reply_to(message, "❌ Invalid user ID!", parse_mode='HTML')
+        bot.reply_to(message, pf("❌ Invalid user ID!"), parse_mode='HTML')
 
 @bot.callback_query_handler(func=lambda c: c.data == "admin_banned_list")
 def admin_banned_list(call):
     if not is_admin(call.from_user.id):
-        bot.answer_callback_query(call.id, "⚠️ Admin only!", show_alert=True)
+        bot.answer_callback_query(call.id, pf("⚠️ Admin only!"), show_alert=True)
         return
     bot.answer_callback_query(call.id)
     
@@ -1382,9 +1394,9 @@ def admin_banned_list(call):
     conn.close()
     
     if not banned:
-        bot.send_message(call.message.chat.id, "📭 No banned users.", parse_mode='HTML')
+        bot.send_message(call.message.chat.id, pf("📭 No banned users."), parse_mode='HTML')
     else:
-        text = "🚫 Banned Users:\n━━━━━━━━━━━━━━━━━━━━━\n"
+        text = f"{pf('🚫 Banned Users:')}\n◈◆◈◆◈◆◈◆◈◆◈◆◈◆◈\n"
         for user_id, username in banned:
             uname = f"@{username}" if username else "N/A"
             text += f"• <code>{user_id}</code> ({uname})\n"
@@ -1393,7 +1405,7 @@ def admin_banned_list(call):
 @bot.callback_query_handler(func=lambda c: c.data == "admin_users_list")
 def admin_users_list(call):
     if not is_admin(call.from_user.id):
-        bot.answer_callback_query(call.id, "⚠️ Admin only!", show_alert=True)
+        bot.answer_callback_query(call.id, pf("⚠️ Admin only!"), show_alert=True)
         return
     bot.answer_callback_query(call.id)
     
@@ -1404,10 +1416,10 @@ def admin_users_list(call):
     conn.close()
     
     if not users:
-        bot.send_message(call.message.chat.id, "📭 No users found.", parse_mode='HTML')
+        bot.send_message(call.message.chat.id, pf("📭 No users found."), parse_mode='HTML')
         return
     
-    text = "👥 Users List:\n━━━━━━━━━━━━━━━━━━━━━\n"
+    text = f"{pf('👥 Users List:')}\n◈◆◈◆◈◆◈◆◈◆◈◆◈◆◈\n"
     for user_id, username, credits in users[:20]:
         uname = f"@{username}" if username else "N/A"
         text += f"• <code>{user_id}</code> | {uname} | 💰{credits}\n"
@@ -1420,7 +1432,7 @@ def admin_users_list(call):
 @bot.callback_query_handler(func=lambda c: c.data == "admin_all_files")
 def admin_all_files(call):
     if not is_admin(call.from_user.id):
-        bot.answer_callback_query(call.id, "⚠️ Admin only!", show_alert=True)
+        bot.answer_callback_query(call.id, pf("⚠️ Admin only!"), show_alert=True)
         return
     bot.answer_callback_query(call.id)
     
@@ -1431,10 +1443,10 @@ def admin_all_files(call):
     conn.close()
     
     if not files:
-        bot.send_message(call.message.chat.id, "📭 No files found.", parse_mode='HTML')
+        bot.send_message(call.message.chat.id, pf("📭 No files found."), parse_mode='HTML')
         return
     
-    text = "📁 All Files:\n━━━━━━━━━━━━━━━━━━━━━\n"
+    text = f"{pf('📁 All Files:')}\n◈◆◈◆◈◆◈◆◈◆◈◆◈◆◈\n"
     for user_id, file_name, approved in files[:30]:
         status = "✅" if approved else "⏳"
         text += f"• <code>{user_id}</code> | {status} {file_name}\n"
@@ -1449,28 +1461,22 @@ def admin_all_files(call):
 # ============================================================
 print("""
 ╔═══════════════════════════════════════════════════════════════╗
-║   ☠️ 𝑺𝑼𝑵𝑹𝑨𝑲𝑼 — 𝑼𝑳𝑻𝑰𝑴𝑨𝑻𝑬 𝑭𝑰𝑳𝑬 𝑹𝑼𝑵𝑵𝑬𝑹 𝑩𝑶𝑻             ║
-║   ✅ Upload .py files                                        ║
-║   ✅ Auto input detection                                    ║
-║   ✅ Send Input (Manual)                                     ║
-║   ✅ Pip Install                                             ║
-║   ✅ View Logs (Fixed)                                       ║
-║   ✅ Credit System (10 free)                                 ║
-║   ✅ 1 Credit = 7 Hours Run                                  ║
-║   ✅ Daily Bonus (2 credits/24h)                             ║
-║   ✅ Refer & Earn (+2 credits per referral)                  ║
-║   ✅ Admin Panel                                             ║
-║   ✅ Add Admin System                                        ║
-║   ✅ Broadcast System                                        ║
-║   ✅ Ban/Unban System                                        ║
-║   ✅ Mixed Serif Font (𝐀ɴɪsʜ style)                          ║
-║   👑 @SunrakuV2 | ID: 8641613327                            ║
-║   📢 @Anishpy | @VOUCH_R                                    ║
+║   ☠️ 𝑺𝑼𝑵𝑹𝑨𝑲𝑼 — 𝑷𝑹𝑬𝑴𝑰𝑼𝑴 𝑭𝑰𝑳𝑬 𝑹𝑼𝑵𝑵𝑬𝑹 𝑩𝑶𝑻              ║
+║   ✦ Upload .py files                                        ║
+║   ✦ Auto input detection                                    ║
+║   ✦ View Logs (FIXED)                                       ║
+║   ✦ Credit System (10 free)                                 ║
+║   ✦ 1 Credit = 7 Hours Run                                  ║
+║   ✦ Daily Bonus (+2 credits/24h)                            ║
+║   ✦ Refer & Earn (+2 credits/ref)                           ║
+║   ✦ Admin Panel                                             ║
+║   ✦ Premium Font (𝐀ɴɪsʜ style)                              ║
+║   ♛ @SunrakuV2 | ID: 8641613327                            ║
+║   ✦ @Anishpy | @VOUCH_R                                    ║
 ╚═══════════════════════════════════════════════════════════════╝
 """)
 print(f"✅ Bot running...")
 print(f"👑 Owner ID: {OWNER_ID}")
-print(f"📢 Channel: @Anishpy | @VOUCH_R")
 
 while True:
     try:
