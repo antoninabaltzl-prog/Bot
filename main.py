@@ -1064,8 +1064,10 @@ def run_file(message):
         session.exit_code = None
         session.last_run_error = ""
         
-        # Use the absolute script path. cwd remains UPLOAD_DIR so relative
-        # files created/read by the uploaded script stay in its file area.
+        # Use the same launch model as the old working bot: pass the
+        # absolute script path and inherit the bot's current directory.
+        # This matches the old working bot exactly. Do not set
+        # cwd=UPLOAD_DIR; that caused the /uploads/uploads/<file> problem.
         session.process = subprocess.Popen(
             [sys.executable, "-u", file_path],
             stdout=subprocess.PIPE,
@@ -1073,13 +1075,12 @@ def run_file(message):
             stdin=subprocess.PIPE,
             text=True,
             bufsize=1,
-            cwd=UPLOAD_DIR,
             env={**os.environ, "PYTHONUNBUFFERED": "1"}
         )
         session.is_running = True
         session.speed = 0
         session.add_log(f"▶️ File started: {file_name}")
-        session.add_log(f"📂 Running from: {UPLOAD_DIR}")
+        session.add_log(f"📂 Running from: {os.getcwd()}")
         
         # Start 7-hour session
         start_run_session(chat_id, file_name)
