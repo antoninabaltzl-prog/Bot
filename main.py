@@ -3,11 +3,9 @@
 """
 ☠️ 𝑺𝑼𝑵𝑹𝑨𝑲𝑼 — 𝑨𝑫𝑽𝑨𝑵𝑪𝑬𝑫 𝑭𝑰𝑳𝑬 𝑹𝑼𝑵𝑵𝑬𝑹 𝑩𝑶𝑻 ☠️
 - User file upload karega
-- Bot automatically BOT_TOKEN + CHAT_ID replace karega
 - Approval system (owner approve karega)
 - Run/Stop/Logs/Status/Speed controls
 - LIVE STATUS + SPEED FIXED
-- Default file (fast hits) bhi available
 - Credit System (10 free)
 - 1 Credit = 7 Hours Run
 - Daily Bonus (+2 credits/24h)
@@ -80,24 +78,24 @@ def pf(text):
     return ' '.join(result)
 
 # ============================================================
-# BUTTON CONSTANTS (Premium Font)
+# BUTTON CONSTANTS
 # ============================================================
-BTN_UPLOAD = pf("📤 Upload File")
-BTN_RUN = pf("▶️ Run File")
-BTN_STOP = pf("⏹ Stop File")
-BTN_LOGS = pf("📜 View Logs")
-BTN_STATUS = pf("📊 Live Status")
-BTN_SPEED = pf("⚡ Speed")
-BTN_PIP = pf("📦 Install Pip")
-BTN_FILES = pf("📂 My Files")
-BTN_INPUT = pf("💬 Send Input")
-BTN_DEV = pf("👑 Dev")
-BTN_CREDITS = pf("💰 Credits")
-BTN_BONUS = pf("🎁 Daily Bonus")
-BTN_REFER = pf("🤝 Refer & Earn")
-BTN_PROFILE = pf("👤 Profile")
-BTN_ADMIN = pf("👑 Admin Panel")
-BTN_CONTACT = pf("📞 Contact")
+BTN_UPLOAD = "📤 Upload File"
+BTN_RUN = "▶️ Run File"
+BTN_STOP = "⏹ Stop File"
+BTN_LOGS = "📜 View Logs"
+BTN_STATUS = "📊 Live Status"
+BTN_SPEED = "⚡ Speed"
+BTN_PIP = "📦 Install Pip"
+BTN_FILES = "📂 My Files"
+BTN_INPUT = "💬 Send Input"
+BTN_DEV = "👑 Dev"
+BTN_CREDITS = "💰 Credits"
+BTN_BONUS = "🎁 Daily Bonus"
+BTN_REFER = "🤝 Refer & Earn"
+BTN_PROFILE = "👤 Profile"
+BTN_ADMIN = "👑 Admin Panel"
+BTN_CONTACT = "📞 Contact"
 
 # ============================================================
 # GLOBALS
@@ -338,7 +336,7 @@ def can_run_free(user_id, file_name):
     return datetime.now() - start_time < timedelta(hours=7)
 
 # ============================================================
-# USER SESSION MANAGER (Fully Fixed)
+# USER SESSION MANAGER
 # ============================================================
 class UserSession:
     def __init__(self, chat_id):
@@ -620,32 +618,8 @@ def reject_file(call):
     bot.answer_callback_query(call.id, "❌ Rejected!")
 
 # ============================================================
-# BOT COMMANDS & BUTTONS
+# MAIN MENU
 # ============================================================
-def main_menu():
-    markup = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    
-    if is_admin(message.from_user.id) if hasattr(message, 'from_user') else False:
-        buttons = [
-            BTN_UPLOAD, BTN_RUN, BTN_STOP, BTN_LOGS,
-            BTN_STATUS, BTN_SPEED, BTN_PIP, BTN_FILES,
-            BTN_INPUT, BTN_CREDITS, BTN_BONUS, BTN_REFER,
-            BTN_PROFILE, BTN_ADMIN, BTN_CONTACT, BTN_DEV
-        ]
-    else:
-        buttons = [
-            BTN_UPLOAD, BTN_RUN, BTN_STOP, BTN_LOGS,
-            BTN_STATUS, BTN_SPEED, BTN_PIP, BTN_FILES,
-            BTN_INPUT, BTN_CREDITS, BTN_BONUS, BTN_REFER,
-            BTN_PROFILE, BTN_CONTACT, BTN_DEV
-        ]
-    
-    for i in range(0, len(buttons), 2):
-        row = buttons[i:i+2]
-        markup.add(*[KeyboardButton(btn) for btn in row])
-    
-    return markup
-
 def get_main_menu(user_id):
     markup = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     
@@ -670,6 +644,9 @@ def get_main_menu(user_id):
     
     return markup
 
+# ============================================================
+# START COMMAND
+# ============================================================
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     chat_id = message.chat.id
@@ -972,7 +949,7 @@ def install_pip_packages(message):
     threading.Thread(target=pip_worker, daemon=True).start()
 
 # ============================================================
-# FILE UPLOAD HANDLER
+# FILE UPLOAD HANDLER - FIXED
 # ============================================================
 @bot.message_handler(content_types=['document'])
 def handle_file_upload(message):
@@ -999,11 +976,14 @@ def handle_file_upload(message):
     try:
         file_info = bot.get_file(message.document.file_id)
         downloaded_file = bot.download_file(file_info.file_path)
+        
+        # 🔥 FIX: Direct file path in UPLOAD_DIR
         file_path = os.path.join(UPLOAD_DIR, f"{chat_id}_{message.document.file_name}")
         
         with open(file_path, 'wb') as f:
             f.write(downloaded_file)
         
+        # 🔥 FIX: Store direct path
         session.file_path = file_path
         add_file_to_session(
             session,
@@ -1035,7 +1015,7 @@ def handle_file_upload(message):
         bot.reply_to(message, f"❌ <b>Upload failed:</b> {str(e)}", parse_mode='HTML')
 
 # ============================================================
-# RUN FILE
+# RUN FILE - FIXED
 # ============================================================
 @bot.message_handler(func=lambda msg: msg.text == BTN_RUN)
 def run_file(message):
@@ -1054,13 +1034,18 @@ def run_file(message):
         bot.reply_to(message, "⚠️ <b>File is already running!</b>\nClick <b>STOP FILE</b> first.", parse_mode='HTML')
         return
     
-    if not session.file_path or not os.path.exists(session.file_path):
+    # 🔥 FIX: Use session.file_path directly
+    file_path = session.file_path
+    
+    if not file_path or not os.path.exists(file_path):
         session.add_log("❌ No file found! Upload a .py file.")
         bot.reply_to(message, "❌ <b>No file found!</b>\n\nUpload a .py file first.", parse_mode='HTML')
         return
     
+    file_name = os.path.basename(file_path)
+    
     # Check credits
-    if not can_run_free(chat_id, os.path.basename(session.file_path)):
+    if not can_run_free(chat_id, file_name):
         credits = get_credits(chat_id)
         if credits <= 0:
             bot.reply_to(message, "❌ <b>Insufficient credits!</b>\n💰 Use Daily Bonus or Refer & Earn", parse_mode='HTML')
@@ -1076,9 +1061,9 @@ def run_file(message):
         session.start_time = datetime.now()
         session.end_time = None
         
-        # Start process with -u flag for unbuffered output
+        # 🔥 FIX: Use direct file_path, cwd = UPLOAD_DIR
         session.process = subprocess.Popen(
-            [sys.executable, "-u", session.file_path],
+            [sys.executable, "-u", file_path],
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             stdin=subprocess.PIPE,
@@ -1088,10 +1073,10 @@ def run_file(message):
         )
         session.is_running = True
         session.speed = 0
-        session.add_log(f"▶️ File started: {os.path.basename(session.file_path)}")
+        session.add_log(f"▶️ File started: {file_name}")
         
         # Start 7-hour session
-        start_run_session(chat_id, os.path.basename(session.file_path))
+        start_run_session(chat_id, file_name)
         
         def read_logs():
             stdout = session.process.stdout
@@ -1148,13 +1133,13 @@ def run_file(message):
             elif return_code is not None:
                 session.add_log(f"⚠️ File exited with code {return_code}")
             
-            end_run_session(chat_id, os.path.basename(session.file_path))
+            end_run_session(chat_id, file_name)
         
         threading.Thread(target=read_logs, daemon=True).start()
         
         bot.reply_to(
             message,
-            f"✅ <b>File started!</b>\n<code>{os.path.basename(session.file_path)}</code>\n💰 <b>Credits left:</b> {new_credits}\n\n📜 Click <b>VIEW LOGS</b> to see output.\n📊 Click <b>LIVE STATUS</b> to check progress.",
+            f"✅ <b>File started!</b>\n<code>{file_name}</code>\n💰 <b>Credits left:</b> {new_credits}\n\n📜 Click <b>VIEW LOGS</b> to see output.\n📊 Click <b>LIVE STATUS</b> to check progress.",
             parse_mode='HTML'
         )
         
@@ -1187,8 +1172,9 @@ def stop_file(message):
         if session.process.poll() is None:
             session.process.kill()
         session.end_time = datetime.now()
-        session.add_log("⏹ File stopped by user")
-        end_run_session(chat_id, os.path.basename(session.file_path))
+        file_name = os.path.basename(session.file_path) if session.file_path else "unknown"
+        session.add_log(f"⏹ File stopped by user")
+        end_run_session(chat_id, file_name)
         bot.reply_to(message, "⏹ <b>File stopped successfully!</b>", parse_mode='HTML')
     except Exception as e:
         bot.reply_to(message, f"❌ <b>Stop error:</b> {str(e)}", parse_mode='HTML')
