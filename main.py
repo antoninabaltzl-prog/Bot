@@ -2,17 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 ☠️ 𝑺𝑼𝑵𝑹𝑨𝑲𝑼 — 𝑨𝑫𝑽𝑨𝑵𝑪𝑬𝑫 𝑭𝑰𝑳𝑬 𝑹𝑼𝑵𝑵𝑬𝑹 𝑩𝑶𝑻 ☠️
-- User file upload karega
-- Approval system (owner approve karega)
-- Run/Stop/Logs/Status/Speed controls
-- LIVE STATUS + SPEED FIXED
-- Credit System (10 free)
-- 1 Credit = 7 Hours Run
-- Daily Bonus (+2 credits/24h)
-- Refer & Earn (+2 credits/ref)
-- Admin Panel (Full Control)
-- Premium Font (𝐀ɴɪsʜ style)
-- Dev: @SunrakuV2 | Channel: @Anishpy | @VOUCH_R
 """
 
 import os
@@ -98,7 +87,7 @@ BTN_ADMIN = "👑 Admin Panel"
 BTN_CONTACT = "📞 Contact"
 
 # ============================================================
-# GLOBALS
+# GLOBALS - 🔥 FIX: UPLOAD_DIR = "uploads" (without slash)
 # ============================================================
 user_sessions = {}
 lock = threading.Lock()
@@ -656,7 +645,6 @@ def send_welcome(message):
         if chat_id not in user_sessions:
             user_sessions[chat_id] = UserSession(chat_id)
     
-    # Check referral
     if len(message.text.split()) > 1:
         ref_code = message.text.split()[1]
         if ref_code.startswith('SUNRAKU'):
@@ -949,7 +937,7 @@ def install_pip_packages(message):
     threading.Thread(target=pip_worker, daemon=True).start()
 
 # ============================================================
-# FILE UPLOAD HANDLER - FIXED
+# 🔥 FILE UPLOAD HANDLER - FIXED
 # ============================================================
 @bot.message_handler(content_types=['document'])
 def handle_file_upload(message):
@@ -977,13 +965,13 @@ def handle_file_upload(message):
         file_info = bot.get_file(message.document.file_id)
         downloaded_file = bot.download_file(file_info.file_path)
         
-        # 🔥 FIX: Direct file path in UPLOAD_DIR
+        # 🔥 FIX: File path direct UPLOAD_DIR mein save
         file_path = os.path.join(UPLOAD_DIR, f"{chat_id}_{message.document.file_name}")
         
         with open(file_path, 'wb') as f:
             f.write(downloaded_file)
         
-        # 🔥 FIX: Store direct path
+        # 🔥 FIX: session.file_path = file_path (direct path)
         session.file_path = file_path
         add_file_to_session(
             session,
@@ -1015,7 +1003,7 @@ def handle_file_upload(message):
         bot.reply_to(message, f"❌ <b>Upload failed:</b> {str(e)}", parse_mode='HTML')
 
 # ============================================================
-# RUN FILE - FIXED
+# 🔥 RUN FILE - FIXED
 # ============================================================
 @bot.message_handler(func=lambda msg: msg.text == BTN_RUN)
 def run_file(message):
@@ -1034,7 +1022,7 @@ def run_file(message):
         bot.reply_to(message, "⚠️ <b>File is already running!</b>\nClick <b>STOP FILE</b> first.", parse_mode='HTML')
         return
     
-    # 🔥 FIX: Use session.file_path directly
+    # 🔥 FIX: Direct file_path use karo, UPLOAD_DIR ke saath join mat karo
     file_path = session.file_path
     
     if not file_path or not os.path.exists(file_path):
@@ -1061,7 +1049,7 @@ def run_file(message):
         session.start_time = datetime.now()
         session.end_time = None
         
-        # 🔥 FIX: Use direct file_path, cwd = UPLOAD_DIR
+        # 🔥 FIX: file_path direct use karo, cwd = UPLOAD_DIR
         session.process = subprocess.Popen(
             [sys.executable, "-u", file_path],
             stdout=subprocess.PIPE,
