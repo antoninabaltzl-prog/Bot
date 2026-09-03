@@ -907,15 +907,31 @@ def install_pip_packages(message):
     )
     def pip_worker():
         try:
+            package_names = {
+                re.split(r"==|!=|~=|>=|<=|>|<", package, maxsplit=1)[0]
+                .split("[", 1)[0]
+                .lower()
+                for package in packages
+            }
+            # Repair the common python-telegram-bot dependency mismatch
+            # without changing the normal install behavior for other packages.
+            dependency_repair = bool(
+                package_names.intersection(
+                    {"anyio", "httpx", "httpcore", "python-telegram-bot"}
+                )
+            )
+            pip_command = [
+                sys.executable,
+                "-m",
+                "pip",
+                "install",
+                "--disable-pip-version-check",
+            ]
+            if dependency_repair:
+                pip_command.extend(["--upgrade", "--force-reinstall", "--no-cache-dir"])
+            pip_command.extend(packages)
             result = subprocess.run(
-                [
-                    sys.executable,
-                    "-m",
-                    "pip",
-                    "install",
-                    "--disable-pip-version-check",
-                    *packages
-                ],
+                pip_command,
                 capture_output=True,
                 text=True,
                 timeout=180
