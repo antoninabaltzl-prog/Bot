@@ -3,13 +3,14 @@
 """
 ☠️ 𝑺𝑼𝑵𝑹𝑨𝑲𝑼 — 𝑷𝑹𝑬𝑴𝑰𝑼𝑴 𝑭𝑰𝑳𝑬 𝑹𝑼𝑵𝑵𝑬𝑹 𝑩𝑶𝑻 ☠️
 ✅ Upload .py files
-✅ Auto input detection
-✅ View Logs (FIXED - Using session.logs)
-✅ Credit System
-✅ Daily Bonus
-✅ Refer & Earn
-✅ 1 Credit = 7 Hours
+✅ Auto input detection (Auto send prompt to user)
+✅ View Logs (FIXED)
+✅ Credit System (10 free)
+✅ 1 Credit = 7 Hours Run
+✅ Daily Bonus (+2 credits/24h)
+✅ Refer & Earn (+2 credits/ref)
 ✅ Admin Panel
+✅ Premium Font (𝐀ɴɪsʜ style)
 👑 Owner: @SunrakuV2 | ID: 8641613327
 📢 Channel: @Anishpy | @VOUCH_R
 """
@@ -32,26 +33,10 @@ from telebot.types import (
 )
 
 # ============================================================
-# BUTTON CONSTANTS
-# ============================================================
-BTN_UPLOAD = "📤 Upload File"
-BTN_RUN = "▶️ Run File"
-BTN_STOP = "⏹ Stop File"
-BTN_LOGS = "📜 View Logs"
-BTN_FILES = "📊 My Files"
-BTN_CREDITS = "💰 Credits"
-BTN_BONUS = "🎁 Daily Bonus"
-BTN_REFER = "🤝 Refer & Earn"
-BTN_PROFILE = "👤 Profile"
-BTN_ADMIN = "👑 Admin Panel"
-BTN_CONTACT = "📞 Contact"
-BTN_INPUT = "💬 Send Input"
-BTN_PIP = "📦 Pip Install"
-
-# ============================================================
-# PREMIUM FONT
+# PREMIUM FONT CONVERTER (𝐀ɴɪsʜ style)
 # ============================================================
 def pf(text):
+    """Convert text to premium font: First letter bold, rest small caps"""
     bold_serif = {
         'A': '𝐀', 'B': '𝐁', 'C': '𝐂', 'D': '𝐃', 'E': '𝐄', 'F': '𝐅', 'G': '𝐆',
         'H': '𝐇', 'I': '𝐈', 'J': '𝐉', 'K': '𝐊', 'L': '𝐋', 'M': '𝐌', 'N': '𝐍',
@@ -83,6 +68,23 @@ def pf(text):
                 converted.append(small_caps.get(char.lower(), char))
         result.append(''.join(converted))
     return ' '.join(result)
+
+# ============================================================
+# BUTTON CONSTANTS (With Premium Font)
+# ============================================================
+BTN_UPLOAD = pf("📤 Upload File")
+BTN_RUN = pf("▶️ Run File")
+BTN_STOP = pf("⏹ Stop File")
+BTN_LOGS = pf("📜 View Logs")
+BTN_FILES = pf("📊 My Files")
+BTN_CREDITS = pf("💰 Credits")
+BTN_BONUS = pf("🎁 Daily Bonus")
+BTN_REFER = pf("🤝 Refer & Earn")
+BTN_PROFILE = pf("👤 Profile")
+BTN_ADMIN = pf("👑 Admin Panel")
+BTN_CONTACT = pf("📞 Contact")
+BTN_INPUT = pf("💬 Send Input")
+BTN_PIP = pf("📦 Pip Install")
 
 # ============================================================
 # CONFIG
@@ -337,7 +339,7 @@ def can_run_free(user_id, file_name):
     return datetime.now() - start_time < timedelta(hours=7)
 
 # ============================================================
-# USER SESSION (WITH LOGS STORAGE)
+# USER SESSION
 # ============================================================
 class UserSession:
     def __init__(self, chat_id):
@@ -346,7 +348,7 @@ class UserSession:
         self.process = None
         self.is_running = False
         self.is_approved = False
-        self.logs = []  # 🔥 LOGS STORE HERE
+        self.logs = []
         self.start_time = None
         self.end_time = None
         self.speed = 0
@@ -357,14 +359,12 @@ class UserSession:
         self.current_file = None
         
     def add_log(self, msg):
-        """Add log with timestamp - LIKE ORIGINAL FILE"""
         timestamp = datetime.now().strftime("%H:%M:%S")
         self.logs.append(f"[{timestamp}] {msg}")
         if len(self.logs) > 500:
             self.logs.pop(0)
             
     def get_logs(self, lines=30):
-        """Get recent logs - LIKE ORIGINAL FILE"""
         if not self.logs:
             return "📭 No logs yet."
         return "\n".join(self.logs[-lines:])
@@ -407,56 +407,84 @@ def looks_like_input(text):
     return bool(INPUT_PROMPT_RE.search(text))
 
 def ask_user_for_input(session, prompt):
+    """Send input prompt to user - AUTO DETECT"""
     if session.awaiting_input:
         return
+        
     session.awaiting_input = True
-    session.add_log(f"⏳ Waiting for input: {prompt[:50]}...")
+    session.add_log(f"⏳ Waiting for input...")
+    
     try:
+        # Send recent logs first
         logs = session.get_logs(15)
         if logs and logs != "📭 No logs yet.":
-            bot.send_message(session.chat_id, f"📜 Recent Logs:\n```\n{logs}\n```", parse_mode='HTML')
+            bot.send_message(
+                session.chat_id,
+                f"{pf('📜 Recent Logs:')}\n```\n{logs}\n```",
+                parse_mode='HTML'
+            )
+        
+        # Send input prompt
         prompt_msg = bot.send_message(
             session.chat_id,
-            f"📥 Input Required!\n\nYour file needs input:\n```\n{prompt}\n```\n\n💬 Reply with the value.\nType /cancel to cancel.",
+            f"{pf('📥 Input Required!')}\n\n"
+            f"{pf('Your file needs input:')}\n"
+            f"```\n{prompt}\n```\n\n"
+            f"{pf('💬 Reply with the value.')}\n"
+            f"{pf('Type /cancel to cancel.')}",
             parse_mode='HTML'
         )
-        bot.register_next_step_handler(prompt_msg, process_input, session.chat_id)
+        
+        bot.register_next_step_handler(prompt_msg, process_user_input, session.chat_id)
+        
     except Exception as e:
         session.awaiting_input = False
         session.add_log(f"❌ Input error: {e}")
 
-def process_input(message, chat_id):
+def process_user_input(message, chat_id):
+    """Process user's input and send to running file"""
     with lock:
         if chat_id not in user_sessions:
             return
         session = user_sessions[chat_id]
+    
     if not session.awaiting_input:
-        bot.reply_to(message, "⚠️ No input needed.")
+        bot.reply_to(message, pf("⚠️ No input needed."))
         return
+        
     if not session.process or not session.is_running:
         session.awaiting_input = False
-        bot.reply_to(message, "⚠️ File stopped.")
+        bot.reply_to(message, pf("⚠️ File stopped."))
         return
+    
     value = message.text or ""
+    
     if value.strip().lower() == "/cancel":
         session.awaiting_input = False
-        bot.reply_to(message, "❎ Cancelled.")
+        bot.reply_to(message, pf("❎ Cancelled."))
         return
+    
     try:
         if session.process.stdin:
             session.process.stdin.write(value + "\n")
             session.process.stdin.flush()
             session.awaiting_input = False
             session.add_log(f"✅ Input sent: {value[:40]}")
-            bot.reply_to(message, f"✅ Input sent!\n`{value[:100]}`")
+            bot.reply_to(message, f"{pf('✅ Input sent!')}\n`{value[:100]}`")
+            
+            # Send updated logs
             time.sleep(0.3)
             logs = session.get_logs(10)
             if logs and logs != "📭 No logs yet.":
-                bot.send_message(chat_id, f"📜 Updated Logs:\n```\n{logs}\n```", parse_mode='HTML')
+                bot.send_message(
+                    chat_id,
+                    f"{pf('📜 Updated Logs:')}\n```\n{logs}\n```",
+                    parse_mode='HTML'
+                )
     except Exception as e:
         session.awaiting_input = False
         session.add_log(f"❌ Input error: {e}")
-        bot.reply_to(message, f"❌ Error: {e}")
+        bot.reply_to(message, f"{pf('❌ Error:')} {e}")
 
 # ============================================================
 # MAIN MENU
@@ -735,6 +763,12 @@ def run_file(message, file_name, free=False):
     msg = bot.reply_to(message, pf("🚀 Starting..."), parse_mode='HTML')
     
     try:
+        # Reset session for new run
+        session.logs = []
+        session.total_checks = 0
+        session.start_time = datetime.now()
+        session.end_time = None
+        
         session.process = subprocess.Popen(
             [sys.executable, "-u", file_path],
             stdout=subprocess.PIPE,
@@ -744,11 +778,7 @@ def run_file(message, file_name, free=False):
             bufsize=1
         )
         session.is_running = True
-        session.start_time = datetime.now()
-        session.end_time = None
         session.file_path = file_path
-        session.total_checks = 0
-        session.speed = 0
         session.is_approved = True
         session.current_file = file_name
         session.add_log(f"✅ Started: {file_name}")
@@ -757,7 +787,7 @@ def run_file(message, file_name, free=False):
             start_run_session(user_id, file_name)
         
         def read_logs():
-            """Read logs from process - LIKE ORIGINAL FILE"""
+            """Read logs from process - REAL TIME"""
             stdout = session.process.stdout
             partial_output = ""
             prompt_sent = False
@@ -860,7 +890,7 @@ def stop_file_cmd(message):
         bot.reply_to(message, f"{pf('❌ Error:')} {e}", parse_mode='HTML')
 
 # ============================================================
-# VIEW LOGS - FIXED (Using session.get_logs like original file)
+# VIEW LOGS - FIXED (Direct response with logs)
 # ============================================================
 @bot.message_handler(func=lambda m: m.text == BTN_LOGS)
 def view_logs_cmd(message):
@@ -871,14 +901,18 @@ def view_logs_cmd(message):
             return
         session = user_sessions[chat_id]
     
-    # Get logs using the same method as original file
+    # Get logs
     logs = session.get_logs(30)
     
+    # Check if file is running or has logs
     if not logs or logs == "📭 No logs yet.":
-        bot.reply_to(message, pf("📭 No logs yet.\n\n▶️ Run a file to see output."), parse_mode='HTML')
+        if session.is_running:
+            bot.reply_to(message, pf("⏳ File is running but no logs yet...\n\nCheck back in a moment."), parse_mode='HTML')
+        else:
+            bot.reply_to(message, pf("📭 No logs yet.\n\n▶️ Run a file to see output."), parse_mode='HTML')
         return
     
-    # Send logs (split if too long)
+    # Send logs
     if len(logs) > 4000:
         chunks = [logs[i:i+4000] for i in range(0, len(logs), 4000)]
         bot.reply_to(message, f"{pf('📜 Recent Logs (Part 1/{}')}{len(chunks)}{pf(')')}:\n```\n{chunks[0]}\n```", parse_mode='HTML')
@@ -888,7 +922,7 @@ def view_logs_cmd(message):
         bot.reply_to(message, f"{pf('📜 Recent Logs:')}\n```\n{logs}\n```", parse_mode='HTML')
 
 # ============================================================
-# SEND INPUT
+# SEND INPUT (Manual)
 # ============================================================
 @bot.message_handler(func=lambda m: m.text == BTN_INPUT)
 def send_input_cmd(message):
