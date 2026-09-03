@@ -725,7 +725,11 @@ def upload_file(message):
 # ============================================================
 #  MY FILES
 # ============================================================
-@bot.message_handler(func=lambda msg: msg.text == " MY FILES")
+def normalized_button_text(message):
+    """Make ReplyKeyboard labels tolerant of extra Telegram spaces."""
+    return " ".join((message.text or "").split()).casefold()
+
+@bot.message_handler(func=lambda msg: normalized_button_text(msg) == "my files")
 def show_my_files(message):
     chat_id = message.chat.id
     with lock:
@@ -838,7 +842,12 @@ PACKAGE_SPEC_RE = re.compile(
     r"(?:(?:==|!=|~=|>=|<=|>|<)[A-Za-z0-9.*+!_-]+)?$"
 )
 @bot.message_handler(commands=['pip'])
-@bot.message_handler(func=lambda msg: msg.text in [" INSTALL PIP", "  𝑰𝑵𝑺𝑻𝑨𝑳𝑳 𝑷𝑰𝑷"])
+@bot.message_handler(
+    func=lambda msg: normalized_button_text(msg) in {
+        "install pip",
+        "𝑰𝑵𝑺𝑻𝑨𝑳𝑳 𝑷𝑰𝑷".casefold(),
+    }
+)
 def install_pip_button(message):
     if not require_access(message):
         return
@@ -1185,7 +1194,7 @@ def show_speed(message):
 # ============================================================
 #  PROCESS INPUT
 # ============================================================
-@bot.message_handler(func=lambda msg: msg.text == "  SEND INPUT")
+@bot.message_handler(func=lambda msg: normalized_button_text(msg) == "send input")
 @bot.message_handler(commands=['input'])
 def request_process_input(message):
     if not require_access(message, activate=False):
