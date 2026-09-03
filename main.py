@@ -21,6 +21,7 @@ import requests
 import threading
 import subprocess
 import shutil
+import unicodedata
 from datetime import datetime, timedelta
 from telebot import TeleBot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
@@ -726,8 +727,9 @@ def upload_file(message):
 #  MY FILES
 # ============================================================
 def normalized_button_text(message):
-    """Make ReplyKeyboard labels tolerant of extra Telegram spaces."""
-    return " ".join((message.text or "").split()).casefold()
+    """Make ReplyKeyboard labels tolerant of emoji, fonts, and spaces."""
+    text = unicodedata.normalize("NFKC", message.text or "")
+    return " ".join(text.split()).casefold()
 
 @bot.message_handler(func=lambda msg: normalized_button_text(msg).endswith("my files"))
 def show_my_files(message):
