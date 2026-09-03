@@ -2,17 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 ☠️ 𝑺𝑼𝑵𝑹𝑨𝑲𝑼 — 𝑷𝑹𝑬𝑴𝑰𝑼𝑴 𝑭𝑰𝑳𝑬 𝑹𝑼𝑵𝑵𝑬𝑹 𝑩𝑶𝑻 ☠️
-✅ Upload .py files
-✅ Auto input detection (Auto send prompt to user)
-✅ View Logs (FIXED)
-✅ Credit System (10 free)
-✅ 1 Credit = 7 Hours Run
-✅ Daily Bonus (+2 credits/24h)
-✅ Refer & Earn (+2 credits/ref)
-✅ Admin Panel
-✅ Premium Font (𝐀ɴɪsʜ style)
-👑 Owner: @SunrakuV2 | ID: 8641613327
-📢 Channel: @Anishpy | @VOUCH_R
 """
 
 import os
@@ -33,10 +22,9 @@ from telebot.types import (
 )
 
 # ============================================================
-# PREMIUM FONT CONVERTER (𝐀ɴɪsʜ style)
+# PREMIUM FONT
 # ============================================================
 def pf(text):
-    """Convert text to premium font: First letter bold, rest small caps"""
     bold_serif = {
         'A': '𝐀', 'B': '𝐁', 'C': '𝐂', 'D': '𝐃', 'E': '𝐄', 'F': '𝐅', 'G': '𝐆',
         'H': '𝐇', 'I': '𝐈', 'J': '𝐉', 'K': '𝐊', 'L': '𝐋', 'M': '𝐌', 'N': '𝐍',
@@ -70,7 +58,7 @@ def pf(text):
     return ' '.join(result)
 
 # ============================================================
-# BUTTON CONSTANTS (With Premium Font)
+# BUTTON CONSTANTS
 # ============================================================
 BTN_UPLOAD = pf("📤 Upload File")
 BTN_RUN = pf("▶️ Run File")
@@ -407,7 +395,6 @@ def looks_like_input(text):
     return bool(INPUT_PROMPT_RE.search(text))
 
 def ask_user_for_input(session, prompt):
-    """Send input prompt to user - AUTO DETECT"""
     if session.awaiting_input:
         return
         
@@ -415,7 +402,6 @@ def ask_user_for_input(session, prompt):
     session.add_log(f"⏳ Waiting for input...")
     
     try:
-        # Send recent logs first
         logs = session.get_logs(15)
         if logs and logs != "📭 No logs yet.":
             bot.send_message(
@@ -424,7 +410,6 @@ def ask_user_for_input(session, prompt):
                 parse_mode='HTML'
             )
         
-        # Send input prompt
         prompt_msg = bot.send_message(
             session.chat_id,
             f"{pf('📥 Input Required!')}\n\n"
@@ -442,7 +427,6 @@ def ask_user_for_input(session, prompt):
         session.add_log(f"❌ Input error: {e}")
 
 def process_user_input(message, chat_id):
-    """Process user's input and send to running file"""
     with lock:
         if chat_id not in user_sessions:
             return
@@ -472,7 +456,6 @@ def process_user_input(message, chat_id):
             session.add_log(f"✅ Input sent: {value[:40]}")
             bot.reply_to(message, f"{pf('✅ Input sent!')}\n`{value[:100]}`")
             
-            # Send updated logs
             time.sleep(0.3)
             logs = session.get_logs(10)
             if logs and logs != "📭 No logs yet.":
@@ -529,7 +512,6 @@ def start_cmd(message):
         if user_id not in user_sessions:
             user_sessions[user_id] = UserSession(user_id)
     
-    # Check referral
     if len(message.text.split()) > 1:
         ref_code = message.text.split()[1]
         if ref_code.startswith('SUNRAKU'):
@@ -681,7 +663,7 @@ def reject_file(call):
     bot.send_message(user_id, f"{pf('❌ Your file')} <code>{file_name}</code> {pf('was rejected.')}\n{pf('📞 Contact @SunrakuV2 for details.')}", parse_mode='HTML')
 
 # ============================================================
-# RUN FILE
+# RUN FILE - FIXED
 # ============================================================
 @bot.message_handler(func=lambda m: m.text == BTN_RUN)
 def run_file_cmd(message):
@@ -741,6 +723,8 @@ def run_selected_file(call):
 
 def run_file(message, file_name, free=False):
     user_id = message.chat.id
+    
+    # Check if already running
     with lock:
         if user_id not in user_sessions:
             user_sessions[user_id] = UserSession(user_id)
@@ -755,39 +739,43 @@ def run_file(message, file_name, free=False):
         bot.reply_to(message, f"{pf('❌ File not found:')} <code>{file_name}</code>", parse_mode='HTML')
         return
     
+    # Deduct credit if not free
     if not free:
         new_credits = deduct_credit(user_id)
     else:
         new_credits = get_credits(user_id)
     
+    # Reset session
+    session.logs = []
+    session.total_checks = 0
+    session.start_time = datetime.now()
+    session.end_time = None
+    session.current_file = file_name
+    session.is_running = True
+    session.is_approved = True
+    session.awaiting_input = False
+    
     msg = bot.reply_to(message, pf("🚀 Starting..."), parse_mode='HTML')
     
     try:
-        # Reset session for new run
-        session.logs = []
-        session.total_checks = 0
-        session.start_time = datetime.now()
-        session.end_time = None
-        
+        # Start process with proper stdin
         session.process = subprocess.Popen(
             [sys.executable, "-u", file_path],
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             stdin=subprocess.PIPE,
             text=True,
-            bufsize=1
+            bufsize=1,
+            cwd=UPLOAD_DIR
         )
-        session.is_running = True
-        session.file_path = file_path
-        session.is_approved = True
-        session.current_file = file_name
+        
         session.add_log(f"✅ Started: {file_name}")
         
         if not free:
             start_run_session(user_id, file_name)
         
+        # Start log reader thread
         def read_logs():
-            """Read logs from process - REAL TIME"""
             stdout = session.process.stdout
             partial_output = ""
             prompt_sent = False
@@ -805,7 +793,6 @@ def run_file(message, file_name, free=False):
                         partial_output += text
                         prompt_sent = False
                         
-                        # Store complete lines as logs
                         while "\n" in partial_output:
                             line, partial_output = partial_output.split("\n", 1)
                             line = line.rstrip("\r")
@@ -813,7 +800,6 @@ def run_file(message, file_name, free=False):
                                 session.add_log(line.strip())
                                 session.total_checks += 1
                     else:
-                        # Check for input prompt
                         prompt = clean_prompt(partial_output)
                         if (
                             prompt
@@ -851,7 +837,7 @@ def run_file(message, file_name, free=False):
         threading.Thread(target=read_logs, daemon=True).start()
         time.sleep(0.5)
         bot.edit_message_text(
-            f"{pf('✅ Running:')} <code>{file_name}</code>\n{pf('💰 Credits left:')} {new_credits}\n{pf('📜 Use View Logs to see output')}",
+            f"{pf('✅ Running:')} <code>{file_name}</code>\n{pf('💰 Credits left:')} {new_credits}\n{pf('📜 Use View Logs to see output')}\n{pf('💬 Use Send Input if file asks for input')}",
             message.chat.id,
             msg.message_id,
             parse_mode='HTML'
@@ -890,7 +876,7 @@ def stop_file_cmd(message):
         bot.reply_to(message, f"{pf('❌ Error:')} {e}", parse_mode='HTML')
 
 # ============================================================
-# VIEW LOGS - FIXED (Direct response with logs)
+# VIEW LOGS
 # ============================================================
 @bot.message_handler(func=lambda m: m.text == BTN_LOGS)
 def view_logs_cmd(message):
@@ -901,10 +887,8 @@ def view_logs_cmd(message):
             return
         session = user_sessions[chat_id]
     
-    # Get logs
     logs = session.get_logs(30)
     
-    # Check if file is running or has logs
     if not logs or logs == "📭 No logs yet.":
         if session.is_running:
             bot.reply_to(message, pf("⏳ File is running but no logs yet...\n\nCheck back in a moment."), parse_mode='HTML')
@@ -912,7 +896,6 @@ def view_logs_cmd(message):
             bot.reply_to(message, pf("📭 No logs yet.\n\n▶️ Run a file to see output."), parse_mode='HTML')
         return
     
-    # Send logs
     if len(logs) > 4000:
         chunks = [logs[i:i+4000] for i in range(0, len(logs), 4000)]
         bot.reply_to(message, f"{pf('📜 Recent Logs (Part 1/{}')}{len(chunks)}{pf(')')}:\n```\n{chunks[0]}\n```", parse_mode='HTML')
@@ -922,7 +905,7 @@ def view_logs_cmd(message):
         bot.reply_to(message, f"{pf('📜 Recent Logs:')}\n```\n{logs}\n```", parse_mode='HTML')
 
 # ============================================================
-# SEND INPUT (Manual)
+# SEND INPUT
 # ============================================================
 @bot.message_handler(func=lambda m: m.text == BTN_INPUT)
 def send_input_cmd(message):
@@ -1498,7 +1481,7 @@ print("""
 ║   ☠️ 𝑺𝑼𝑵𝑹𝑨𝑲𝑼 — 𝑷𝑹𝑬𝑴𝑰𝑼𝑴 𝑭𝑰𝑳𝑬 𝑹𝑼𝑵𝑵𝑬𝑹 𝑩𝑶𝑻              ║
 ║   ✦ Upload .py files                                        ║
 ║   ✦ Auto input detection                                    ║
-║   ✦ View Logs (FIXED)                                       ║
+║   ✦ View Logs                                               ║
 ║   ✦ Credit System (10 free)                                 ║
 ║   ✦ 1 Credit = 7 Hours Run                                  ║
 ║   ✦ Daily Bonus (+2 credits/24h)                            ║
