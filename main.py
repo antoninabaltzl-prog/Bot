@@ -87,12 +87,16 @@ BTN_ADMIN = "👑 Admin Panel"
 BTN_CONTACT = "📞 Contact"
 
 # ============================================================
-# GLOBALS - 🔥 FIX: UPLOAD_DIR = "uploads" (without slash)
+# GLOBALS
 # ============================================================
 user_sessions = {}
 lock = threading.Lock()
-UPLOAD_DIR = "uploads"
-DATA_DIR = "data"
+# Always use absolute paths. If cwd is changed to UPLOAD_DIR while
+# starting a file, a relative "uploads/file.py" becomes
+# "/app/uploads/uploads/file.py".
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
+DATA_DIR = os.path.join(BASE_DIR, "data")
 DATABASE_PATH = os.path.join(DATA_DIR, 'bot.db')
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(DATA_DIR, exist_ok=True)
@@ -965,13 +969,18 @@ def handle_file_upload(message):
         file_info = bot.get_file(message.document.file_id)
         downloaded_file = bot.download_file(file_info.file_path)
         
-        # 🔥 FIX: File path direct UPLOAD_DIR mein save
-        file_path = os.path.join(UPLOAD_DIR, f"{chat_id}_{message.document.file_name}")
+        # Keep the uploaded file inside UPLOAD_DIR and use an absolute path.
+        original_name = os.path.basename(message.document.file_name)
+        safe_name = re.sub(r"[^A-Za-z0-9._-]", "_", original_name)
+        if not safe_name or safe_name == "." or safe_name == "..":
+            bot.reply_to(message, "❌ <b>Invalid file name.</b>", parse_mode='HTML')
+            return
+        file_path = os.path.join(UPLOAD_DIR, f"{chat_id}_{safe_name}")
         
         with open(file_path, 'wb') as f:
             f.write(downloaded_file)
         
-        # 🔥 FIX: session.file_path = file_path (direct path)
+        # Store the same absolute path that will be passed to Popen.
         session.file_path = file_path
         add_file_to_session(
             session,
@@ -1022,7 +1031,7 @@ def run_file(message):
         bot.reply_to(message, "⚠️ <b>File is already running!</b>\nClick <b>STOP FILE</b> first.", parse_mode='HTML')
         return
     
-    # 🔥 FIX: Direct file_path use karo, UPLOAD_DIR ke saath join mat karo
+    # file_path is absolute, so it remains valid even when cwd is UPLOAD_DIR.
     file_path = session.file_path
     
     if not file_path or not os.path.exists(file_path):
@@ -1049,7 +1058,8 @@ def run_file(message):
         session.start_time = datetime.now()
         session.end_time = None
         
-        # 🔥 FIX: file_path direct use karo, cwd = UPLOAD_DIR
+        # Use the absolute script path. cwd remains UPLOAD_DIR so relative
+        # files created/read by the uploaded script stay in its file area.
         session.process = subprocess.Popen(
             [sys.executable, "-u", file_path],
             stdout=subprocess.PIPE,
