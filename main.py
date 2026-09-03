@@ -663,13 +663,13 @@ def main_menu(chat_id=None):
     # markers are used to make every button visually distinct.
     btn1 = KeyboardButton("🟦  𝑼𝑷𝑳𝑶𝑨𝑫 𝑭𝑰𝑳𝑬")
     btn2 = KeyboardButton("🟢  𝑹𝑼𝑵 𝑭𝑰𝑳𝑬")
-    btn3 = KeyboardButton(" ⏹ 𝑺𝑻𝑶𝑷 𝑭𝑰𝑳𝑬")
+    btn3 = KeyboardButton("⏹️  𝑺𝑻𝑶𝑷 𝑭𝑰𝑳𝑬")
     btn4 = KeyboardButton("🟡  𝑽𝑰𝑬𝑾 𝑳𝑶𝑮𝑺")
     btn5 = KeyboardButton("🟣  𝑳𝑰𝑽𝑬 𝑺𝑻𝑨𝑻𝑼𝑺")
     btn6 = KeyboardButton("🟠 ⚡ 𝑺𝑷𝑬𝑬𝑫")
-    btn7 = KeyboardButton(" INSTALL PIP")
-    btn8 = KeyboardButton(" MY FILES")
-    btn9 = KeyboardButton("  SEND INPUT")
+    btn7 = KeyboardButton("🟤  INSTALL PIP")
+    btn8 = KeyboardButton("📁  MY FILES")
+    btn9 = KeyboardButton("✏️  SEND INPUT")
     btn10 = KeyboardButton("⚫  𝑫𝑬𝑽")
     btn11 = KeyboardButton("💳  𝑴𝒀 𝑪𝑹𝑬𝑫𝑰𝑻𝑺")
     markup.add(btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9, btn10, btn11)
@@ -729,7 +729,7 @@ def normalized_button_text(message):
     """Make ReplyKeyboard labels tolerant of extra Telegram spaces."""
     return " ".join((message.text or "").split()).casefold()
 
-@bot.message_handler(func=lambda msg: normalized_button_text(msg) == "my files")
+@bot.message_handler(func=lambda msg: normalized_button_text(msg).endswith("my files"))
 def show_my_files(message):
     chat_id = message.chat.id
     with lock:
@@ -843,10 +843,7 @@ PACKAGE_SPEC_RE = re.compile(
 )
 @bot.message_handler(commands=['pip'])
 @bot.message_handler(
-    func=lambda msg: normalized_button_text(msg) in {
-        "install pip",
-        "𝑰𝑵𝑺𝑻𝑨𝑳𝑳 𝑷𝑰𝑷".casefold(),
-    }
+    func=lambda msg: normalized_button_text(msg).endswith("install pip")
 )
 def install_pip_button(message):
     if not require_access(message):
@@ -1085,7 +1082,7 @@ def run_file(message):
 # ============================================================
 # ⏹ STOP FILE
 # ============================================================
-@bot.message_handler(func=lambda msg: msg.text == " ⏹ 𝑺𝑻𝑶𝑷 𝑭𝑰𝑳𝑬")
+@bot.message_handler(func=lambda msg: normalized_button_text(msg).endswith("stop file"))
 def stop_file(message):
     chat_id = message.chat.id
     with lock:
@@ -1194,7 +1191,7 @@ def show_speed(message):
 # ============================================================
 #  PROCESS INPUT
 # ============================================================
-@bot.message_handler(func=lambda msg: normalized_button_text(msg) == "send input")
+@bot.message_handler(func=lambda msg: normalized_button_text(msg).endswith("send input"))
 @bot.message_handler(commands=['input'])
 def request_process_input(message):
     if not require_access(message, activate=False):
@@ -1252,9 +1249,9 @@ def send_process_input(message):
 @bot.message_handler(func=lambda msg: msg.text == "⚫  𝑫𝑬𝑽")
 def show_dev(message):
     markup = InlineKeyboardMarkup()
-    btn1 = InlineKeyboardButton(" @SunrakuV2", url="https://t.me/SunrakuV2")
-    btn2 = InlineKeyboardButton(" @Anishpy", url="https://t.me/Anishpy")
-    btn3 = InlineKeyboardButton(" @VOUCH_R", url="https://t.me/VOUCH_R")
+    btn1 = InlineKeyboardButton("👨‍💻 @SunrakuV2", url="https://t.me/SunrakuV2")
+    btn2 = InlineKeyboardButton("📢 @Anishpy", url="https://t.me/Anishpy")
+    btn3 = InlineKeyboardButton("✅ @VOUCH_R", url="https://t.me/VOUCH_R")
     markup.add(btn1, btn2, btn3)
     bot.reply_to(message, " **Developer & Channels:**", reply_markup=markup, parse_mode='Markdown')
 # ============================================================
